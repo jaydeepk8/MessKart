@@ -47,14 +47,14 @@ fun MapScreen(
 
     val sheetState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
-            initialValue = SheetValue.PartiallyExpanded,
+            initialValue = SheetValue.Expanded,
             skipHiddenState = true
         )
     )
 
     BottomSheetScaffold(
         scaffoldState = sheetState,
-        sheetPeekHeight = 280.dp,
+        sheetPeekHeight = 150.dp,
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetContainerColor = Color.White,
         sheetDragHandle = {
@@ -69,7 +69,6 @@ fun MapScreen(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Spacer(Modifier.height(4.dp))
 
-                // Header
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,7 +99,6 @@ fun MapScreen(
 
                 Spacer(Modifier.height(12.dp))
 
-                // Horizontal cards
                 LazyRow(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -118,7 +116,7 @@ fun MapScreen(
                 .padding(innerPadding)
                 .background(Color.White)
         ) {
-            // Search bar
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -136,7 +134,6 @@ fun MapScreen(
                     tint = TextPrimary, modifier = Modifier.size(20.dp))
             }
 
-            // Filter chips
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 16.dp),
@@ -176,7 +173,6 @@ fun MapScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // Map placeholder
             Box(
                 modifier = Modifier
                     .fillMaxSize()
