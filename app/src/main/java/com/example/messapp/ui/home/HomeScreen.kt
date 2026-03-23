@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.messapp.navigation.Routes
 import com.example.messapp.ui.home.components.LocationAndSearchSection
 import com.example.messapp.ui.home.components.MessItemCard
 import com.example.messapp.ui.home.components.MessNearMeHeader
@@ -39,15 +40,11 @@ fun HomeScreen(
     val listState = rememberLazyListState()
 
     val showStickyHeader by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 1
-        }
+        derivedStateOf { listState.firstVisibleItemIndex > 1 }
     }
 
     Box {
-        LazyColumn(
-            state = listState
-        ) {
+        LazyColumn(state = listState) {
 
             item {
                 LocationAndSearchSection(
@@ -58,16 +55,16 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OfferCarousel(
-                    banners = uiState.offerBanners
-                )
+                OfferCarousel(banners = uiState.offerBanners)
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
             item {
                 MessNearMeHeader(
-                    onViewMapClick = {}
+                    onViewMapClick = {
+                        navController.navigate(Routes.MAP)
+                    }
                 )
             }
 
@@ -75,7 +72,7 @@ fun HomeScreen(
                 MessItemCard(
                     mess = mess,
                     onClick = {
-                        navController.navigate("mess_details/${mess.id}")
+                        navController.navigate("${Routes.MESS_DETAILS}/${mess.id}")
                     }
                 )
             }
@@ -97,7 +94,9 @@ fun HomeScreen(
                         .padding(vertical = 8.dp)
                 ) {
                     MessNearMeHeader(
-                        onViewMapClick = {}
+                        onViewMapClick = {
+                            navController.navigate(Routes.MAP)
+                        }
                     )
                 }
             }

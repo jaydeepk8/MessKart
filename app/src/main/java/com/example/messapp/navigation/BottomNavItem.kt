@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomNavItem(
@@ -23,7 +22,6 @@ sealed class BottomNavItem(
         title = "Subscription",
         icon = Icons.Default.CalendarMonth
     )
-
 
     object Profile : BottomNavItem(
         route = "profile",

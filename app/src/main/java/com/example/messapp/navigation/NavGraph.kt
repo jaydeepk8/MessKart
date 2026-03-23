@@ -18,19 +18,21 @@ import com.example.messapp.ui.auth.SignUpScreen
 import com.example.messapp.ui.cart.CartViewModel
 import com.example.messapp.ui.details.MessDetailsRoute
 import com.example.messapp.ui.home.HomeScreen
+import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
 import com.example.messapp.ui.profile.ProfileScreen
 import com.example.messapp.ui.subscription.SubscriptionScreen
 import com.example.messapp.ui.subscription.SubscriptionViewModel
 
 object Routes {
-    const val LOGIN = "login"
-    const val HOME = "home"
+    const val LOGIN        = "login"
+    const val HOME         = "home"
+    const val MAP          = "map"
     const val SUBSCRIPTION = "subscription"
-    const val PROFILE = "profile"
+    const val PROFILE      = "profile"
     const val ORDER_SUMMARY = "order_summary"
     const val MESS_DETAILS = "mess_details"
-    const val SIGN_UP = "sign_up"
+    const val SIGN_UP      = "sign_up"
 }
 
 @Composable
@@ -70,33 +72,35 @@ fun MessNavGraph() {
                             popUpTo(Routes.LOGIN) { inclusive = true }
                         }
                     },
-                    onSignUpClick = {
-                        navController.navigate(SIGN_UP)
-                    },
-                    onForgotPasswordClick = { },
-                    onGoogleClick = { },
-                    onFacebookClick = { }
+                    onSignUpClick = { navController.navigate(SIGN_UP) },
+                    onForgotPasswordClick = {},
+                    onGoogleClick = {},
+                    onFacebookClick = {}
                 )
             }
 
             composable(SIGN_UP) {
                 SignUpScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = { navController.popBackStack() },
                     onCreateAccountClick = {
                         navController.navigate(HOME) {
                             popUpTo(SIGN_UP) { inclusive = true }
                         }
                     },
-                    onLoginClick = {
-                        navController.popBackStack()
-                    }
+                    onLoginClick = { navController.popBackStack() }
                 )
             }
 
             composable(Routes.HOME) {
                 HomeScreen(navController)
+            }
+
+            composable(Routes.MAP) {
+                MapScreen(
+                    onMessClick = { messId ->
+                        navController.navigate("${Routes.MESS_DETAILS}/$messId")
+                    }
+                )
             }
 
             composable(Routes.SUBSCRIPTION) {
