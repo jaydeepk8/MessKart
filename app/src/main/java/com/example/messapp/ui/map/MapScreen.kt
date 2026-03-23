@@ -2,6 +2,7 @@ package com.example.messapp.ui.map
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -9,10 +10,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,13 +28,17 @@ import androidx.compose.ui.unit.sp
 import com.example.messapp.data.model.Mess
 import com.example.messapp.data.source.MessDataSource
 
-private val SheetBg         = Color(0xFF1A2E1A)
-private val AccentGreen     = Color(0xFF4CAF50)
-private val ChipActiveBg    = Color(0xFF4CAF50)
-private val ChipInactiveBg  = Color(0xFF2E3F2E)
-private val ChipInactiveTxt = Color(0xFFCCCCCC)
-private val TextWhite       = Color(0xFFFFFFFF)
-private val TextMuted       = Color(0xFFAAAAAA)
+// ── Color tokens matching project theme ───────────────────────────────────────
+private val PrimaryGreen    = Color(0xFF8BC34A)   // from BottomNavBar
+private val ActiveChipBg    = Color(0xFFE53935)   // red pill for "Open Now" as per screenshot
+private val InactiveChipBg  = Color.White
+private val InactiveChipBorder = Color(0xFFDDDDDD)
+private val TextPrimary     = Color(0xFF1A1A1A)
+private val TextSecondary   = Color(0xFF757575)
+private val SheetBg         = Color(0xFFFFFFFF)
+private val CardBg          = Color(0xFFF7F7F7)
+private val RatingGold      = Color(0xFFFFC107)
+private val ViewAllColor    = Color(0xFFE53935)   // orange-red as in screenshot
 
 @Composable
 fun MapScreen(
@@ -43,38 +48,29 @@ fun MapScreen(
     var activeFilter by remember { mutableStateOf("Open Now") }
     val filters = listOf("Open Now", "Pure Veg", "Rating 4.0+")
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
 
-        // Map placeholder
-        Box(
-            modifier = Modifier.fillMaxSize().background(Color(0xFFD4E6C3)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Map loads here", fontSize = 16.sp, color = Color(0xFF4A7C4A))
-        }
-
-        // Search bar
+        // ── Search bar ────────────────────────────────────────────────────
         Row(
             modifier = Modifier
-                .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
-                .background(SheetBg.copy(alpha = 0.92f), RoundedCornerShape(28.dp))
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .background(Color(0xFFF0F0F0), RoundedCornerShape(28.dp))
+                .padding(horizontal = 16.dp, vertical = 11.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.Search, null, tint = AccentGreen, modifier = Modifier.size(20.dp))
+            Icon(Icons.Default.Search, null,
+                tint = Color(0xFFE53935), modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(10.dp))
-            Text("Search for messes...", fontSize = 14.sp, color = TextMuted, modifier = Modifier.weight(1f))
-            Icon(Icons.Default.FilterList, "Filter", tint = TextWhite, modifier = Modifier.size(20.dp))
+            Text("Search for messes...", fontSize = 14.sp,
+                color = Color(0xFF9E9E9E), modifier = Modifier.weight(1f))
+            Icon(Icons.Default.FilterList, "Filter",
+                tint = TextPrimary, modifier = Modifier.size(20.dp))
         }
 
-        // Filter chips
+        // ── Filter chips ──────────────────────────────────────────────────
         LazyRow(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 72.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -82,52 +78,101 @@ fun MapScreen(
                 val isActive = filter == activeFilter
                 Row(
                     modifier = Modifier
-                        .background(if (isActive) ChipActiveBg else ChipInactiveBg, RoundedCornerShape(20.dp))
+                        .then(
+                            if (isActive)
+                                Modifier.background(ActiveChipBg, RoundedCornerShape(20.dp))
+                            else
+                                Modifier
+                                    .background(InactiveChipBg, RoundedCornerShape(20.dp))
+                                    .border(1.dp, InactiveChipBorder, RoundedCornerShape(20.dp))
+                        )
                         .clickable { activeFilter = filter }
-                        .padding(horizontal = 14.dp, vertical = 7.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     if (filter.contains("Rating")) {
                         Icon(Icons.Default.Star, null,
-                            tint = if (isActive) Color.White else Color(0xFFFFD700),
+                            tint = if (isActive) Color.White else RatingGold,
                             modifier = Modifier.size(13.dp))
                     }
-                    Text(filter, fontSize = 12.sp, fontWeight = FontWeight.Medium,
-                        color = if (isActive) Color.White else ChipInactiveTxt)
+                    Text(
+                        text = filter,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isActive) Color.White else TextPrimary
+                    )
                 }
             }
         }
 
-        // Dark bottom sheet
+        Spacer(Modifier.height(10.dp))
+
+        // ── Map placeholder (~55% of remaining height) ────────────────────
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(Color(0xFFE8EAE6)),
+            contentAlignment = Alignment.Center
+        ) {
+            // Replace this Box with your MapboxMap/OSMDroid composable later
+            Text("Map loads here", fontSize = 15.sp, color = Color(0xFF7A9070))
+        }
+
+        // ── White bottom sheet ────────────────────────────────────────────
         Column(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(SheetBg, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .padding(top = 12.dp, bottom = 16.dp)
+                .background(SheetBg, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
         ) {
+            // Drag handle
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
+                    .padding(top = 10.dp)
                     .size(width = 36.dp, height = 4.dp)
-                    .background(Color(0xFF4A6044), RoundedCornerShape(2.dp))
+                    .background(Color(0xFFDDDDDD), RoundedCornerShape(2.dp))
             )
+
             Spacer(Modifier.height(12.dp))
+
+            // Header
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
                 Column {
-                    Text("Nearby Messes", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextWhite)
-                    Text("${messes.size} places near you", fontSize = 12.sp, color = TextMuted)
+                    Text(
+                        text = "Nearby Messes",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "12 places discoverable near you",
+                        fontSize = 12.sp,
+                        color = TextSecondary
+                    )
                 }
-                Text("View All", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = AccentGreen)
+                Text(
+                    text = "View All",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ViewAllColor
+                )
             }
-            Spacer(Modifier.height(14.dp))
+
+            Spacer(Modifier.height(12.dp))
+
+            // Horizontal scrolling cards
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp, end = 16.dp, bottom = 16.dp
+                ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(messes) { mess ->
@@ -138,59 +183,103 @@ fun MapScreen(
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Vertical mess card — full width, tall image, clean white card
+// ─────────────────────────────────────────────────────────────────────────────
 @Composable
 private fun MapMessCard(mess: Mess, onClick: () -> Unit) {
-
-    Column(
+    Card(
         modifier = Modifier
-            .width(220.dp)
-            .background(Color(0xFF243324), RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .clickable { onClick() }
+            .width(260.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth().height(130.dp)) {
-            Image(
-                painter = painterResource(id = mess.imageRes),
-                contentDescription = mess.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            Row(
-                modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)
-                    .background(Color(0xCC000000), RoundedCornerShape(20.dp))
-                    .padding(horizontal = 7.dp, vertical = 3.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)
+        Column {
+            // ── Image ────────────────────────────────────────────────────
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
             ) {
-                Icon(Icons.Default.Star, null, tint = Color(0xFFFFD700), modifier = Modifier.size(11.dp))
-                Text(mess.rating.toString(), fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-            }
-        }
+                Image(
+                    painter = painterResource(id = mess.imageRes),
+                    contentDescription = mess.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                )
 
-        Column(modifier = Modifier.padding(10.dp)) {
-            Text(mess.name, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color.White,
-                maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Spacer(Modifier.height(3.dp))
-            Text("▸ ${mess.distanceKm}  •  ${mess.cuisine}", fontSize = 11.sp, color = Color(0xFFAAAAAA),
-                maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("STARTING", fontSize = 9.sp, color = Color(0xFFAAAAAA), letterSpacing = 0.5.sp)
-                    Text("₹80", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                // Rating pill — top right
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(10.dp)
+                        .background(Color.White, RoundedCornerShape(20.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Icon(Icons.Default.Star, null,
+                        tint = RatingGold, modifier = Modifier.size(13.dp))
+                    Text(
+                        text = mess.rating.toString(),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
+                    )
                 }
+            }
+
+            // ── Details ──────────────────────────────────────────────────
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    text = mess.name,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = TextSecondary,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(Modifier.width(3.dp))
+                    Text(
+                        text = "${mess.distanceKm}  •  ${mess.cuisine}",
+                        fontSize = 12.sp,
+                        color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                // Green View button
                 Box(
                     modifier = Modifier
-                        .background(Color(0xFF4CAF50), RoundedCornerShape(10.dp))
+                        .fillMaxWidth()
+                        .background(PrimaryGreen, RoundedCornerShape(10.dp))
                         .clickable { onClick() }
-                        .padding(horizontal = 16.dp, vertical = 7.dp)
+                        .padding(vertical = 9.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text("View", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    Text(
+                        text = "View",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
                 }
             }
         }
