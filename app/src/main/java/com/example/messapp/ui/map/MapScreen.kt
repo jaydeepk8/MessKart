@@ -78,7 +78,7 @@ fun MapScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Nearby Messes",
+                            text = "Nearby Mess",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
