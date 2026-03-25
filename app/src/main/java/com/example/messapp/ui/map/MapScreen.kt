@@ -54,7 +54,7 @@ fun MapScreen(
 
     BottomSheetScaffold(
         scaffoldState = sheetState,
-        sheetPeekHeight = 220.dp,
+        sheetPeekHeight = 150.dp,
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetContainerColor = Color.White,
         sheetDragHandle = {
