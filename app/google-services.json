@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "675167353485",
+    "project_id": "messkart-b1ac5",
+    "storage_bucket": "messkart-b1ac5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675167353485:android:b1569722d70908407b80c4",
+        "android_client_info": {
+          "package_name": "com.example.messapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB16fgEHfw4wO1eA2Z3bdtlpCJEYGwX28U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
