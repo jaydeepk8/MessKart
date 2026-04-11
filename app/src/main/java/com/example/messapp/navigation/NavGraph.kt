@@ -44,7 +44,7 @@ fun MessNavGraph() {
     val subscriptionViewModel: SubscriptionViewModel = viewModel()
     val authViewModel: AuthViewModel = viewModel()
 
-    val startDestination = if (authViewModel.isLoggedIn) Routes.HOME else Routes.LOGIN
+    val startDestination =  Routes.LOGIN
 
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
