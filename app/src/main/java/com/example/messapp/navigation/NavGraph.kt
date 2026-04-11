@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.messapp.navigation.Routes.HOME
 import com.example.messapp.navigation.Routes.SIGN_UP
+import com.example.messapp.ui.auth.AuthViewModel
 import com.example.messapp.ui.auth.LoginScreen
 import com.example.messapp.ui.auth.SignUpScreen
 import com.example.messapp.ui.cart.CartViewModel
@@ -41,6 +42,9 @@ fun MessNavGraph() {
     val navController = rememberNavController()
     val cartViewModel: CartViewModel = viewModel()
     val subscriptionViewModel: SubscriptionViewModel = viewModel()
+    val authViewModel: AuthViewModel = viewModel()
+
+    val startDestination = if (authViewModel.isLoggedIn) Routes.HOME else Routes.LOGIN
 
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
@@ -51,6 +55,7 @@ fun MessNavGraph() {
                 currentRoute == Routes.LOGIN ||
                         currentRoute == Routes.SIGN_UP ||
                         currentRoute == Routes.ORDER_SUMMARY ||
+                        currentRoute == Routes.MAP ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
             if (!hideBottomBar) {
@@ -61,7 +66,7 @@ fun MessNavGraph() {
 
         NavHost(
             navController = navController,
-            startDestination = Routes.LOGIN,
+            startDestination = startDestination,
             modifier = Modifier.padding(paddingValues)
         ) {
 
@@ -75,7 +80,8 @@ fun MessNavGraph() {
                     onSignUpClick = { navController.navigate(SIGN_UP) },
                     onForgotPasswordClick = {},
                     onGoogleClick = {},
-                    onFacebookClick = {}
+                    onFacebookClick = {},
+                    authViewModel = authViewModel
                 )
             }
 
@@ -87,7 +93,8 @@ fun MessNavGraph() {
                             popUpTo(SIGN_UP) { inclusive = true }
                         }
                     },
-                    onLoginClick = { navController.popBackStack() }
+                    onLoginClick = { navController.popBackStack() },
+                    authViewModel = authViewModel
                 )
             }
 
@@ -113,9 +120,7 @@ fun MessNavGraph() {
 
             composable(
                 route = "${Routes.MESS_DETAILS}/{messId}",
-                arguments = listOf(
-                    navArgument("messId") { type = NavType.IntType }
-                )
+                arguments = listOf(navArgument("messId") { type = NavType.IntType })
             ) { backStackEntry ->
                 MessDetailsRoute(
                     messId = backStackEntry.arguments!!.getInt("messId"),
