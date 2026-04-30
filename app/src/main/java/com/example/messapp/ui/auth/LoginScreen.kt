@@ -4,7 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -45,20 +47,20 @@ fun LoginScreen(
     val uiState by authViewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            onLoginClick()
-        }
+        if (uiState.isSuccess) onLoginClick()
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(screenBg)
+            .verticalScroll(rememberScrollState())
     ) {
+        // ── Hero image ────────────────────────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(280.dp)
+                .height(260.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.login_food),
@@ -72,7 +74,7 @@ fun LoginScreen(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
-                            startY = 300f
+                            startY = 200f
                         )
                     )
             )
@@ -81,19 +83,22 @@ fun LoginScreen(
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
             ) {
-                Text("Hungry again?", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text("Hungry again?", color = Color.White,
+                    fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(4.dp))
-                Text("Sign in to your account", color = Color.White.copy(alpha = 0.85f), fontSize = 14.sp)
+                Text("Sign in to your account",
+                    color = Color.White.copy(alpha = 0.85f), fontSize = 14.sp)
             }
         }
 
+        // ── Form ──────────────────────────────────────────────────────────
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            Spacer(Modifier.height(8.dp))
 
+            // Error card
             if (uiState.errorMessage != null) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -110,14 +115,12 @@ fun LoginScreen(
                 Spacer(Modifier.height(12.dp))
             }
 
-            Text("Email", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
+            // Email
+            Text("Email", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
             Spacer(Modifier.height(6.dp))
             OutlinedTextField(
                 value = email,
-                onValueChange = {
-                    email = it
-                    authViewModel.clearError()
-                },
+                onValueChange = { email = it; authViewModel.clearError() },
                 placeholder = { Text("Enter your email") },
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
@@ -132,27 +135,27 @@ fun LoginScreen(
                 )
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(14.dp))
 
-            Text("Password", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
+            // Password
+            Text("Password", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
             Spacer(Modifier.height(6.dp))
             OutlinedTextField(
                 value = password,
-                onValueChange = {
-                    password = it
-                    authViewModel.clearError()
-                },
+                onValueChange = { password = it; authViewModel.clearError() },
                 placeholder = { Text("Enter your password") },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
-                            if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            if (passwordVisible) Icons.Default.Visibility
+                            else Icons.Default.VisibilityOff,
                             contentDescription = null
                         )
                     }
                 },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,
@@ -172,9 +175,9 @@ fun LoginScreen(
                 Text("Forgot Password?", color = greenPrimary)
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(16.dp))
 
-
+            // Login button
             Button(
                 onClick = { authViewModel.login(email, password) },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -189,12 +192,14 @@ fun LoginScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Login", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text("Login", color = Color.White,
+                        fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
 
+            // Divider
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Divider(modifier = Modifier.weight(1f))
                 Text("  Or continue with  ", color = Color.Gray, fontSize = 12.sp)
@@ -203,21 +208,32 @@ fun LoginScreen(
 
             Spacer(Modifier.height(16.dp))
 
+            // Social buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                SocialButton(iconRes = R.drawable.ic_google, text = "Google",
-                    onClick = onGoogleClick, modifier = Modifier.weight(1f))
-                SocialButton(iconRes = R.drawable.ic_facebook, text = "Facebook",
-                    onClick = onFacebookClick, modifier = Modifier.weight(1f))
+                SocialButton(
+                    iconRes = R.drawable.ic_google,
+                    text = "Google",
+                    onClick = onGoogleClick,
+                    modifier = Modifier.weight(1f)
+                )
+                SocialButton(
+                    iconRes = R.drawable.ic_facebook,
+                    text = "Facebook",
+                    onClick = onFacebookClick,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
 
-            Divider(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                thickness = 0.6.dp, color = Color.LightGray)
+            Divider(thickness = 0.6.dp, color = Color.LightGray)
 
+            Spacer(Modifier.height(8.dp))
+
+            // Sign up row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -228,6 +244,8 @@ fun LoginScreen(
                     Text("Sign Up", color = greenPrimary, fontWeight = FontWeight.Bold)
                 }
             }
+
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -249,8 +267,11 @@ private fun SocialButton(
             contentColor = Color.Black
         )
     ) {
-        Image(painter = painterResource(id = iconRes), contentDescription = null,
-            modifier = Modifier.size(18.dp))
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
         Spacer(Modifier.width(8.dp))
         Text(text)
     }
