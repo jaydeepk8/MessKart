@@ -52,7 +52,7 @@ fun MessItemCard(
             ) { onClick(mess) },
         shape = RoundedCornerShape(22.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF1F3F7)
+            containerColor = Color(0xFFF5F5F5)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -84,7 +84,7 @@ fun MessItemCard(
                     Box(
                         modifier = Modifier
                             .background(
-                                Color(0xD8FCFCFC),
+                                Color(0xFFE8F5E9),
                                 RoundedCornerShape(12.dp)
                             )
                             .padding(horizontal = 8.dp, vertical = 4.dp)
