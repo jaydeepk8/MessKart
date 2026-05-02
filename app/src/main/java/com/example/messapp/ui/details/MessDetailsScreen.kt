@@ -56,6 +56,9 @@ fun MessDetailsScreen(
     val tabs = listOf("Today's Special", "Main Menu", "Subscription")
     var showSubscriptionDialog by remember { mutableStateOf(false) }
 
+    val subscriptions by subscriptionViewModel.subscriptions.collectAsState()
+    val isAlreadySubscribed = subscriptions.any { it.messName == name }
+
     val todaySpecialItems = remember {
         listOf(
             MenuItem(101, "Special Veg Thali", "Fresh home-style food", 120, R.drawable.paneer1),
@@ -95,38 +98,27 @@ fun MessDetailsScreen(
         ) {
 
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp)
-                ) {
+                Box(modifier = Modifier.fillMaxWidth().height(280.dp)) {
                     Image(
                         painter = painterResource(imageRes),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
-
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f))
-                                )
+                        modifier = Modifier.fillMaxSize().background(
+                            Brush.verticalGradient(
+                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f))
                             )
+                        )
                     )
-
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         IconButton(onClick = onBackClick) {
                             Icon(Icons.Default.ArrowBack, null, tint = Color.White)
                         }
-
                         Row {
                             IconButton(onClick = {}) {
                                 Icon(Icons.Default.Search, null, tint = Color.White)
@@ -136,17 +128,11 @@ fun MessDetailsScreen(
                             }
                         }
                     }
-
                     Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
+                        modifier = Modifier.align(Alignment.BottomStart).padding(16.dp)
                     ) {
-                        Text(
-                            name,
-                            color = Color.White,
-                            style = MaterialTheme.typography.headlineSmall
-                        )
+                        Text(name, color = Color.White,
+                            style = MaterialTheme.typography.headlineSmall)
                         Spacer(Modifier.height(6.dp))
                         Text("⭐ $rating • $time • $type", color = Color.White)
                     }
@@ -158,8 +144,7 @@ fun MessDetailsScreen(
                     selectedTabIndex = selectedTab,
                     indicator = {
                         Box(
-                            Modifier
-                                .tabIndicatorOffset(it[selectedTab])
+                            Modifier.tabIndicatorOffset(it[selectedTab])
                                 .height(3.dp)
                                 .background(greenPrimary)
                         )
@@ -215,8 +200,11 @@ fun MessDetailsScreen(
                         )
                         Spacer(Modifier.height(12.dp))
                         SubscriptionPlanCard(
+                            isSubscribed = isAlreadySubscribed,
                             onSubscribeClick = {
-                                showSubscriptionDialog = true
+                                if (!isAlreadySubscribed) {
+                                    showSubscriptionDialog = true
+                                }
                             }
                         )
                     }

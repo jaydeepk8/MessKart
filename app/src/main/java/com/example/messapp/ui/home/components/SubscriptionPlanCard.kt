@@ -26,7 +26,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SubscriptionPlanCard(
     pricePerMonth: Int = 250,
-    onSubscribeClick: () -> Unit
+    onSubscribeClick: () -> Unit,
+    isSubscribed: Boolean
 ) {
 
     val greenPrimary = Color(0xFF8BC34A)

@@ -4,5 +4,6 @@ data class ActiveSubscription(
     val messName: String,
     val messImageRes: Int,
     val pricePerWeek: Int,
-    val nextDelivery: String
+    val nextDelivery: String,
+    val messId: Int
 )
