@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -21,12 +22,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.messapp.R
 import com.example.messapp.ui.cart.CartViewModel
 import com.example.messapp.ui.home.components.MainMenuItemCard
 import com.example.messapp.ui.home.components.SubscriptionPlanCard
 import com.example.messapp.ui.home.components.TodaySpecialItemCard
 import com.example.messapp.ui.home.components.ViewOrderBar
+import com.example.messapp.ui.subscription.ActiveSubscription
 import com.example.messapp.ui.subscription.SubscriptionDialog
 import com.example.messapp.ui.subscription.SubscriptionViewModel
 
@@ -57,6 +60,7 @@ fun MessDetailsScreen(
     var showSubscriptionDialog by remember { mutableStateOf(false) }
 
     val subscriptions by subscriptionViewModel.subscriptions.collectAsState()
+    val pendingSubscription by subscriptionViewModel.pendingSubscription.collectAsState()
     val isAlreadySubscribed = subscriptions.any { it.messName == name }
 
     val todaySpecialItems = remember {
@@ -79,6 +83,40 @@ fun MessDetailsScreen(
     val cartItems by cartViewModel.cartItems.collectAsState()
     val totalItems by cartViewModel.totalItems.collectAsState()
     val totalPrice by cartViewModel.totalPrice.collectAsState()
+
+    if (pendingSubscription != null) {
+        AlertDialog(
+            onDismissRequest = { subscriptionViewModel.cancelPendingSubscription() },
+            shape = RoundedCornerShape(16.dp),
+            title = {
+                Text("Active Subscription Exists", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    "You already have an active subscription. Do you want to also subscribe to \"${pendingSubscription!!.messName}\"?",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = { subscriptionViewModel.confirmAddSubscription() },
+                    colors = ButtonDefaults.buttonColors(containerColor = greenPrimary),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text("Yes, Add", color = Color.White)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { subscriptionViewModel.cancelPendingSubscription() },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         bottomBar = {
