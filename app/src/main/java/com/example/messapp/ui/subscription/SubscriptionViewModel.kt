@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-// ActiveSubscription is declared in SubscriptionUiModel.kt — not repeated here
 
 class SubscriptionViewModel : ViewModel() {
 
