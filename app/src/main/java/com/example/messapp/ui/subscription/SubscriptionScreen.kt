@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.messapp.ui.theme.AppBackground
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,7 +37,7 @@ fun SubscriptionScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF6F6F6))
+                .background(AppBackground)
                 .padding(padding)
                 .padding(16.dp)
         ) {

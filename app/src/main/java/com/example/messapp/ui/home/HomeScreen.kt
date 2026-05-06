@@ -32,6 +32,7 @@ import com.example.messapp.ui.home.components.LocationAndSearchSection
 import com.example.messapp.ui.home.components.MessItemCard
 import com.example.messapp.ui.home.components.MessNearMeHeader
 import com.example.messapp.ui.home.components.OfferCarousel
+import com.example.messapp.ui.theme.AppBackground
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -53,7 +54,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(AppBackground)
     ) {
         LazyColumn(state = listState) {
 

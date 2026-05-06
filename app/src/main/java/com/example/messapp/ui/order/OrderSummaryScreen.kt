@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.messapp.ui.cart.CartViewModel
+import com.example.messapp.ui.theme.AppBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +95,7 @@ fun OrderSummaryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(Color(0xFFF6F6F6)),
+                    .background(AppBackground),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -131,7 +132,7 @@ fun OrderSummaryScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF6F6F6))
+                    .background(AppBackground)
                     .padding(padding),
                 contentPadding = PaddingValues(16.dp)
             ) {

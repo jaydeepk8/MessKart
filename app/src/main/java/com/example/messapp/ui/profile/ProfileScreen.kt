@@ -18,6 +18,7 @@ import com.example.messapp.ui.profile.components.AccountSettingsSection
 import com.example.messapp.ui.profile.components.FoodOrdersSection
 import com.example.messapp.ui.profile.components.MoreSection
 import com.example.messapp.ui.profile.components.ProfileUserCard
+import com.example.messapp.ui.theme.AppBackground
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +56,7 @@ fun ProfileScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Color(0xFFF7F7F7)),
+                .background(AppBackground),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
 

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.messapp.R
+import com.example.messapp.ui.theme.AppBackground
 
 @Composable
 fun LoginScreen(
@@ -35,7 +36,6 @@ fun LoginScreen(
     authViewModel: AuthViewModel = viewModel()
 ) {
     val greenPrimary = Color(0xFF8BC34A)
-    val screenBg = Color(0xFFF6F6F6)
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -50,7 +50,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(screenBg)
+            .background(AppBackground)
             .verticalScroll(rememberScrollState())
     ) {
         // Hero image

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.messapp.data.model.Mess
 import com.example.messapp.data.source.MessDataSource
+import com.example.messapp.ui.theme.AppBackground
 
 private val PrimaryGreen       = Color(0xFF8BC34A)
 private val ActiveChipBg       = Color(0xFF8BC34A)
@@ -114,7 +115,7 @@ fun MapScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(Color.White)
+                .background(AppBackground)
         ) {
 
             Row(
