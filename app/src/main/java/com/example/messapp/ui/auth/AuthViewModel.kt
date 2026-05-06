@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 data class AuthUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val successMessage: String? = null,
     val isSuccess: Boolean = false
 )
 
@@ -28,7 +29,7 @@ class AuthViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
             val result = repository.login(email.trim(), password.trim())
             result.fold(
                 onSuccess = {
@@ -60,7 +61,7 @@ class AuthViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
             val result = repository.signUp(email.trim(), password.trim())
             result.fold(
                 onSuccess = {
@@ -80,6 +81,48 @@ class AuthViewModel : ViewModel() {
 
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    fun clearMessages() {
+        _uiState.update { it.copy(errorMessage = null, successMessage = null) }
+    }
+
+    fun sendPasswordReset(email: String) {
+        if (email.isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Enter your email first") }
+            return
+        }
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
+            val result = repository.sendPasswordResetEmail(email.trim())
+            result.fold(
+                onSuccess = {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            successMessage = "Password reset link sent to ${email.trim()}"
+                        )
+                    }
+                },
+                onFailure = { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = parseFirebaseError(e.message)
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    fun showUnavailableProvider(provider: String) {
+        _uiState.update {
+            it.copy(
+                errorMessage = "$provider sign-in is not configured yet.",
+                successMessage = null
+            )
+        }
     }
 
     fun logout() {

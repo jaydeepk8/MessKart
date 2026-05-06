@@ -12,7 +12,8 @@ import androidx.compose.ui.unit.dp
 fun StickyTopBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    onViewMapClick: () -> Unit
+    onViewMapClick: () -> Unit,
+    onFilterClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -24,7 +25,7 @@ fun StickyTopBar(
         SearchBarWithFilter(
             query = query,
             onQueryChange = onQueryChange,
-            onFilterClick = {}
+            onFilterClick = onFilterClick
         )
 
         Spacer(modifier = Modifier.height(8.dp))

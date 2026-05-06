@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +30,7 @@ import com.example.messapp.ui.home.components.LocationAndSearchSection
 import com.example.messapp.ui.home.components.MessItemCard
 import com.example.messapp.ui.home.components.MessNearMeHeader
 import com.example.messapp.ui.home.components.OfferCarousel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -38,6 +41,8 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val messes = viewModel.messes
     val listState = rememberLazyListState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val showStickyHeader by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 1 }
@@ -50,7 +55,11 @@ fun HomeScreen(
                 LocationAndSearchSection(
                     uiState = uiState,
                     onSearchChange = viewModel::onSearchQueryChange,
-                    onFilterClick = {}
+                    onFilterClick = {
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Filters are coming soon")
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -101,5 +110,10 @@ fun HomeScreen(
                 }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }

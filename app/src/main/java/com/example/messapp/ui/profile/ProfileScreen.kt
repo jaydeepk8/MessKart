@@ -7,6 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -16,14 +18,24 @@ import com.example.messapp.ui.profile.components.AccountSettingsSection
 import com.example.messapp.ui.profile.components.FoodOrdersSection
 import com.example.messapp.ui.profile.components.MoreSection
 import com.example.messapp.ui.profile.components.ProfileUserCard
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
 
     var vegModeEnabled by rememberSaveable { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    fun showComingSoon(feature: String) {
+        scope.launch {
+            snackbarHostState.showSnackbar("$feature is coming soon")
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -53,7 +65,7 @@ fun ProfileScreen() {
                 ProfileUserCard(
                     userName = "Jaydeep Kulkarni",
                     phoneNumber = "9888745238",
-                    onEditClick = { }
+                    onEditClick = { showComingSoon("Profile editing") }
                 )
             }
 
@@ -61,9 +73,9 @@ fun ProfileScreen() {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 AccountSettingsSection(
-                    onPersonalInfoClick = { },
-                    onManageAddressesClick = { },
-                    onPaymentMethodsClick = { }
+                    onPersonalInfoClick = { showComingSoon("Personal information") },
+                    onManageAddressesClick = { showComingSoon("Address management") },
+                    onPaymentMethodsClick = { showComingSoon("Payment methods") }
                 )
             }
 
@@ -73,8 +85,8 @@ fun ProfileScreen() {
                 FoodOrdersSection(
                     vegModeEnabled = vegModeEnabled,
                     onVegModeToggle = { vegModeEnabled = it },
-                    onSubscriptionsAndOrdersClick = { },
-                    onOrderHistoryClick = { }
+                    onSubscriptionsAndOrdersClick = { showComingSoon("Subscriptions and orders") },
+                    onOrderHistoryClick = { showComingSoon("Order history") }
                 )
             }
 
@@ -82,8 +94,8 @@ fun ProfileScreen() {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 MoreSection(
-                    onNotificationsClick = { },
-                    onHelpSupportClick = { }
+                    onNotificationsClick = { showComingSoon("Notifications") },
+                    onHelpSupportClick = { showComingSoon("Help and support") }
                 )
             }
         }

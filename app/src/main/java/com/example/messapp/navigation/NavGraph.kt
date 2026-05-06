@@ -78,9 +78,6 @@ fun MessNavGraph() {
                         }
                     },
                     onSignUpClick = { navController.navigate(SIGN_UP) },
-                    onForgotPasswordClick = {},
-                    onGoogleClick = {},
-                    onFacebookClick = {},
                     authViewModel = authViewModel
                 )
             }

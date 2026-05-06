@@ -32,9 +32,6 @@ import com.example.messapp.R
 fun LoginScreen(
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit,
-    onForgotPasswordClick: () -> Unit,
-    onGoogleClick: () -> Unit,
-    onFacebookClick: () -> Unit,
     authViewModel: AuthViewModel = viewModel()
 ) {
     val greenPrimary = Color(0xFF8BC34A)
@@ -56,7 +53,7 @@ fun LoginScreen(
             .background(screenBg)
             .verticalScroll(rememberScrollState())
     ) {
-        // ── Hero image ────────────────────────────────────────────────────
+        // Hero image
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -91,7 +88,7 @@ fun LoginScreen(
             }
         }
 
-        // ── Form ──────────────────────────────────────────────────────────
+        // Form
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,12 +112,28 @@ fun LoginScreen(
                 Spacer(Modifier.height(12.dp))
             }
 
+            if (uiState.successMessage != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        text = uiState.successMessage!!,
+                        color = Color(0xFF2E7D32),
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+
             // Email
             Text("Email", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
             Spacer(Modifier.height(6.dp))
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it; authViewModel.clearError() },
+                onValueChange = { email = it; authViewModel.clearMessages() },
                 placeholder = { Text("Enter your email") },
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
@@ -142,7 +155,7 @@ fun LoginScreen(
             Spacer(Modifier.height(6.dp))
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it; authViewModel.clearError() },
+                onValueChange = { password = it; authViewModel.clearMessages() },
                 placeholder = { Text("Enter your password") },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 trailingIcon = {
@@ -169,7 +182,7 @@ fun LoginScreen(
             )
 
             TextButton(
-                onClick = onForgotPasswordClick,
+                onClick = { authViewModel.sendPasswordReset(email) },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Forgot Password?", color = greenPrimary)
@@ -216,13 +229,13 @@ fun LoginScreen(
                 SocialButton(
                     iconRes = R.drawable.ic_google,
                     text = "Google",
-                    onClick = onGoogleClick,
+                    onClick = { authViewModel.showUnavailableProvider("Google") },
                     modifier = Modifier.weight(1f)
                 )
                 SocialButton(
                     iconRes = R.drawable.ic_facebook,
                     text = "Facebook",
-                    onClick = onFacebookClick,
+                    onClick = { authViewModel.showUnavailableProvider("Facebook") },
                     modifier = Modifier.weight(1f)
                 )
             }

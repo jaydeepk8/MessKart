@@ -40,7 +40,9 @@ fun OrderSummaryScreen(
     val greenPrimary = Color(0xFF8BC34A)
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val addressSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showCheckoutSheet by remember { mutableStateOf(false) }
+    var showAddressSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -87,7 +89,7 @@ fun OrderSummaryScreen(
     ) { padding ->
 
         if (cartItems.isEmpty()) {
-            // ── Empty cart state ──────────────────────────────────────────
+            // Empty cart state
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -125,7 +127,7 @@ fun OrderSummaryScreen(
             }
 
         } else {
-            // ── Cart has items ────────────────────────────────────────────
+            // Cart has items
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -167,7 +169,9 @@ fun OrderSummaryScreen(
                                     color = Color.Gray
                                 )
                             }
-                            Text("Change", color = greenPrimary, fontWeight = FontWeight.SemiBold)
+                            TextButton(onClick = { showAddressSheet = true }) {
+                                Text("Change", color = greenPrimary, fontWeight = FontWeight.SemiBold)
+                            }
                         }
                     }
                     Spacer(Modifier.height(24.dp))
@@ -250,7 +254,7 @@ fun OrderSummaryScreen(
                     }
                 }
 
-                // Payment summary — only shown when cart is not empty
+                // Payment summary is only shown when cart is not empty.
                 item {
                     Spacer(Modifier.height(12.dp))
                     SectionTitle("PAYMENT SUMMARY")
@@ -290,6 +294,17 @@ fun OrderSummaryScreen(
             CheckoutBottomSheet(
                 total = total,
                 onConfirm = { showCheckoutSheet = false }
+            )
+        }
+    }
+
+    if (showAddressSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showAddressSheet = false },
+            sheetState = addressSheetState
+        ) {
+            AddressBottomSheet(
+                onSave = { showAddressSheet = false }
             )
         }
     }

@@ -1,7 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services")
+}
+
+val googleServicesFile = project.layout.projectDirectory.file("google-services.json").asFile
+if (googleServicesFile.exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {

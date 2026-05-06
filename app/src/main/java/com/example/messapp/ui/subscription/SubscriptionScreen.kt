@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun SubscriptionScreen(
@@ -28,41 +29,51 @@ fun SubscriptionScreen(
 ) {
     val subscriptions by subscriptionViewModel.subscriptions.collectAsState()
     val greenPrimary = Color(0xFF8BC34A)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF6F6F6))
-            .padding(16.dp)
-    ) {
-        Text("My Subscriptions", fontSize = 22.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(4.dp))
-        Text(
-            "${subscriptions.size} active plan${if (subscriptions.size != 1) "s" else ""}",
-            fontSize = 13.sp, color = Color.Gray
-        )
-        Spacer(Modifier.height(16.dp))
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF6F6F6))
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            Text("My Subscriptions", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "${subscriptions.size} active plan${if (subscriptions.size != 1) "s" else ""}",
+                fontSize = 13.sp, color = Color.Gray
+            )
+            Spacer(Modifier.height(16.dp))
 
-        if (subscriptions.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("🍱", fontSize = 48.sp)
-                    Spacer(Modifier.height(12.dp))
-                    Text("No active subscriptions yet.",
-                        color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                    Spacer(Modifier.height(6.dp))
-                    Text("Go to a mess and subscribe to a plan.",
-                        color = Color.LightGray, fontSize = 13.sp)
+            if (subscriptions.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("🍱", fontSize = 48.sp)
+                        Spacer(Modifier.height(12.dp))
+                        Text("No active subscriptions yet.",
+                            color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                        Spacer(Modifier.height(6.dp))
+                        Text("Go to a mess and subscribe to a plan.",
+                            color = Color.LightGray, fontSize = 13.sp)
+                    }
                 }
-            }
-        } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(subscriptions) { subscription ->
-                    ActiveSubscriptionCard(
-                        subscription = subscription,
-                        greenPrimary = greenPrimary,
-                        onCancel = { subscriptionViewModel.cancelSubscription(subscription.messId) }
-                    )
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(subscriptions) { subscription ->
+                        ActiveSubscriptionCard(
+                            subscription = subscription,
+                            greenPrimary = greenPrimary,
+                            onManage = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Plan management is coming soon")
+                                }
+                            },
+                            onCancel = { subscriptionViewModel.cancelSubscription(subscription.messId) }
+                        )
+                    }
                 }
             }
         }
@@ -73,6 +84,7 @@ fun SubscriptionScreen(
 fun ActiveSubscriptionCard(
     subscription: ActiveSubscription,
     greenPrimary: Color,
+    onManage: () -> Unit = {},
     onCancel: () -> Unit = {}
 ) {
     Card(
@@ -117,7 +129,7 @@ fun ActiveSubscriptionCard(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
-                        onClick = {},
+                        onClick = onManage,
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = greenPrimary)

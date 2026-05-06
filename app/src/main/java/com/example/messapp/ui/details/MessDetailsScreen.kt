@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -32,6 +33,7 @@ import com.example.messapp.ui.home.components.ViewOrderBar
 import com.example.messapp.ui.subscription.ActiveSubscription
 import com.example.messapp.ui.subscription.SubscriptionDialog
 import com.example.messapp.ui.subscription.SubscriptionViewModel
+import kotlinx.coroutines.launch
 
 data class MenuItem(
     val id: Int,
@@ -58,6 +60,9 @@ fun MessDetailsScreen(
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Today's Special", "Main Menu", "Subscription")
     var showSubscriptionDialog by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val subscriptions by subscriptionViewModel.subscriptions.collectAsState()
     val pendingSubscription by subscriptionViewModel.pendingSubscription.collectAsState()
@@ -119,6 +124,7 @@ fun MessDetailsScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (totalItems > 0) {
                 ViewOrderBar(
@@ -158,11 +164,30 @@ fun MessDetailsScreen(
                             Icon(Icons.Default.ArrowBack, null, tint = Color.White)
                         }
                         Row {
-                            IconButton(onClick = {}) {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Menu search is coming soon")
+                                    }
+                                }
+                            ) {
                                 Icon(Icons.Default.Search, null, tint = Color.White)
                             }
-                            IconButton(onClick = {}) {
-                                Icon(Icons.Default.FavoriteBorder, null, tint = Color.White)
+                            IconButton(
+                                onClick = {
+                                    isFavorite = !isFavorite
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            if (isFavorite) "Added to favourites" else "Removed from favourites"
+                                        )
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    null,
+                                    tint = Color.White
+                                )
                             }
                         }
                     }
