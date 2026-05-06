@@ -22,6 +22,7 @@ import com.example.messapp.ui.home.HomeScreen
 import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
 import com.example.messapp.ui.profile.ProfileScreen
+import com.example.messapp.ui.subscription.SubscriptionFlowScreen
 import com.example.messapp.ui.subscription.SubscriptionScreen
 import com.example.messapp.ui.subscription.SubscriptionViewModel
 
@@ -33,6 +34,7 @@ object Routes {
     const val PROFILE      = "profile"
     const val ORDER_SUMMARY = "order_summary"
     const val MESS_DETAILS = "mess_details"
+    const val SUBSCRIPTION_FLOW = "subscription_flow"
     const val SIGN_UP      = "sign_up"
 }
 
@@ -56,6 +58,7 @@ fun MessNavGraph() {
                         currentRoute == Routes.SIGN_UP ||
                         currentRoute == Routes.ORDER_SUMMARY ||
                         currentRoute == Routes.MAP ||
+                        currentRoute?.startsWith(Routes.SUBSCRIPTION_FLOW) == true ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
             if (!hideBottomBar) {
@@ -123,6 +126,17 @@ fun MessNavGraph() {
                     messId = backStackEntry.arguments!!.getInt("messId"),
                     navController = navController,
                     cartViewModel = cartViewModel,
+                    subscriptionViewModel = subscriptionViewModel
+                )
+            }
+
+            composable(
+                route = "${Routes.SUBSCRIPTION_FLOW}/{messId}",
+                arguments = listOf(navArgument("messId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                SubscriptionFlowScreen(
+                    messId = backStackEntry.arguments!!.getInt("messId"),
+                    navController = navController,
                     subscriptionViewModel = subscriptionViewModel
                 )
             }

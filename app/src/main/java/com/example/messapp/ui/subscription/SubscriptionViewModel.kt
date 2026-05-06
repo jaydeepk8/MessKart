@@ -26,6 +26,12 @@ class SubscriptionViewModel : ViewModel() {
         }
     }
 
+    fun addConfirmedSubscription(subscription: ActiveSubscription) {
+        _subscriptions.value = _subscriptions.value
+            .filterNot { it.messId == subscription.messId } + subscription
+        _pendingSubscription.value = null
+    }
+
     fun confirmAddSubscription() {
         val pending = _pendingSubscription.value ?: return
         _subscriptions.value = _subscriptions.value + pending

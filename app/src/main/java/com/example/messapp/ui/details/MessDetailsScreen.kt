@@ -30,8 +30,6 @@ import com.example.messapp.ui.home.components.MainMenuItemCard
 import com.example.messapp.ui.home.components.SubscriptionPlanCard
 import com.example.messapp.ui.home.components.TodaySpecialItemCard
 import com.example.messapp.ui.home.components.ViewOrderBar
-import com.example.messapp.ui.subscription.ActiveSubscription
-import com.example.messapp.ui.subscription.SubscriptionDialog
 import com.example.messapp.ui.subscription.SubscriptionViewModel
 import kotlinx.coroutines.launch
 
@@ -53,19 +51,18 @@ fun MessDetailsScreen(
     type: String,
     onBackClick: () -> Unit,
     onViewOrderClick: () -> Unit,
+    onSubscribeClick: () -> Unit,
     cartViewModel: CartViewModel,
     subscriptionViewModel: SubscriptionViewModel
 ) {
     val greenPrimary = Color(0xFF8BC34A)
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Today's Special", "Main Menu", "Subscription")
-    var showSubscriptionDialog by remember { mutableStateOf(false) }
     var isFavorite by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     val subscriptions by subscriptionViewModel.subscriptions.collectAsState()
-    val pendingSubscription by subscriptionViewModel.pendingSubscription.collectAsState()
     val isAlreadySubscribed = subscriptions.any { it.messName == name }
 
     val todaySpecialItems = remember {
@@ -88,40 +85,6 @@ fun MessDetailsScreen(
     val cartItems by cartViewModel.cartItems.collectAsState()
     val totalItems by cartViewModel.totalItems.collectAsState()
     val totalPrice by cartViewModel.totalPrice.collectAsState()
-
-    if (pendingSubscription != null) {
-        AlertDialog(
-            onDismissRequest = { subscriptionViewModel.cancelPendingSubscription() },
-            shape = RoundedCornerShape(16.dp),
-            title = {
-                Text("Active Subscription Exists", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Text(
-                    "You already have an active subscription. Do you want to also subscribe to \"${pendingSubscription!!.messName}\"?",
-                    fontSize = 14.sp,
-                    color = Color.DarkGray
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = { subscriptionViewModel.confirmAddSubscription() },
-                    colors = ButtonDefaults.buttonColors(containerColor = greenPrimary),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text("Yes, Add", color = Color.White)
-                }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = { subscriptionViewModel.cancelPendingSubscription() },
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -266,7 +229,7 @@ fun MessDetailsScreen(
                             isSubscribed = isAlreadySubscribed,
                             onSubscribeClick = {
                                 if (!isAlreadySubscribed) {
-                                    showSubscriptionDialog = true
+                                    onSubscribeClick()
                                 }
                             }
                         )
@@ -278,13 +241,4 @@ fun MessDetailsScreen(
         }
     }
 
-    if (showSubscriptionDialog) {
-        SubscriptionDialog(
-            messName = name,
-            messImageRes = imageRes,
-            pricePerMonth = 250,
-            subscriptionViewModel = subscriptionViewModel,
-            onDismiss = { showSubscriptionDialog = false }
-        )
-    }
 }
