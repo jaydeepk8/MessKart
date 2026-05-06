@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -28,6 +27,10 @@ fun MessItemCard(
     mess: Mess,
     onClick: (Mess) -> Unit
 ) {
+
+    val cardColor = Color(0xFFF6F7FB)
+    val ratingBg = Color(0xFFE4F8EB)
+    val ratingText = Color(0xFF159947)
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -52,12 +55,12 @@ fun MessItemCard(
             ) { onClick(mess) },
         shape = RoundedCornerShape(22.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFEFEFEF)
+            containerColor = cardColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
-            modifier = Modifier.padding(14.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -65,8 +68,8 @@ fun MessItemCard(
                 painter = painterResource(id = mess.imageRes),
                 contentDescription = mess.name,
                 modifier = Modifier
-                    .size(88.dp)
-                    .clip(RoundedCornerShape(18.dp)),
+                    .size(92.dp)
+                    .clip(RoundedCornerShape(20.dp)),
                 contentScale = ContentScale.Crop
             )
 
@@ -84,14 +87,14 @@ fun MessItemCard(
                     Box(
                         modifier = Modifier
                             .background(
-                                Color(0xFFEFEFEF),
+                                ratingBg,
                                 RoundedCornerShape(12.dp)
                             )
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = "${mess.rating} ★",
-                            color = Color(0xFF2E7D32),
+                            color = ratingText,
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
