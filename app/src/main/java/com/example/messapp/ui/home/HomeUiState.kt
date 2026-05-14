@@ -6,6 +6,8 @@ data class HomeUiState(
     val locationName: String = "Home",
     val address: String = "123, Green Park Society, Kothrud, Pune",
     val searchQuery: String = "",
+    val activeFilters: Set<String> = emptySet(),
+    val sortOption: String = "Nearest",
     val offerBanners: List<Int> = listOf(
         R.drawable.b1,
         R.drawable.b2,
