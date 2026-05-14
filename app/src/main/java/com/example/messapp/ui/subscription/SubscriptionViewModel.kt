@@ -45,4 +45,38 @@ class SubscriptionViewModel : ViewModel() {
     fun cancelSubscription(messId: Int) {
         _subscriptions.value = _subscriptions.value.filter { it.messId != messId }
     }
+
+    fun cancelSubscription(messId: Int, reason: String) {
+        _subscriptions.value = _subscriptions.value
+            .map {
+                if (it.messId == messId) it.copy(cancelReason = reason) else it
+            }
+            .filter { it.messId != messId }
+    }
+
+    fun togglePause(messId: Int) {
+        updateSubscription(messId) { it.copy(isPaused = !it.isPaused) }
+    }
+
+    fun toggleSkipNextMeal(messId: Int) {
+        updateSubscription(messId) { it.copy(isNextMealSkipped = !it.isNextMealSkipped) }
+    }
+
+    fun updateMealPreference(messId: Int, mealPreference: String, foodPreference: String) {
+        updateSubscription(messId) {
+            it.copy(
+                mealPreference = mealPreference,
+                foodPreference = foodPreference
+            )
+        }
+    }
+
+    private fun updateSubscription(
+        messId: Int,
+        transform: (ActiveSubscription) -> ActiveSubscription
+    ) {
+        _subscriptions.value = _subscriptions.value.map {
+            if (it.messId == messId) transform(it) else it
+        }
+    }
 }

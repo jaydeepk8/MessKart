@@ -165,7 +165,9 @@ fun SubscriptionFlowScreen(
                                 messImageRes = mess.imageRes,
                                 pricePerWeek = if (selectedPlan == "Monthly") plan.price / 4 else plan.price,
                                 nextDelivery = "$startDate, $timeSlot",
-                                messId = mess.id
+                                messId = mess.id,
+                                mealPreference = mealTime,
+                                foodPreference = foodType
                             )
                         )
                     }
