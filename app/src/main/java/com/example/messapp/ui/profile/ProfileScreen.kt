@@ -27,7 +27,7 @@ fun ProfileScreen(
     onPersonalInfoClick: () -> Unit = {},
     onManageAddressesClick: () -> Unit = {},
     onPaymentMethodsClick: () -> Unit = {},
-    onOrderHistoryClick: () -> Unit = {}
+    onSubscriptionsAndOrdersClick: () -> Unit = {}
 ) {
 
     var vegModeEnabled by rememberSaveable { mutableStateOf(false) }
@@ -91,8 +91,7 @@ fun ProfileScreen(
                 FoodOrdersSection(
                     vegModeEnabled = vegModeEnabled,
                     onVegModeToggle = { vegModeEnabled = it },
-                    onSubscriptionsAndOrdersClick = { showComingSoon("Subscriptions and orders") },
-                    onOrderHistoryClick = onOrderHistoryClick
+                    onSubscriptionsAndOrdersClick = onSubscriptionsAndOrdersClick
                 )
             }
 

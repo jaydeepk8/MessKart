@@ -5,8 +5,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,8 +18,7 @@ import androidx.compose.ui.unit.dp
 fun FoodOrdersSection(
     vegModeEnabled: Boolean,
     onVegModeToggle: (Boolean) -> Unit,
-    onSubscriptionsAndOrdersClick: () -> Unit,
-    onOrderHistoryClick: () -> Unit
+    onSubscriptionsAndOrdersClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -53,16 +50,6 @@ fun FoodOrdersSection(
                     iconTint = Color(0xFFFF6D00),
                     title = "Subscriptions & Orders",
                     onClick = onSubscriptionsAndOrdersClick
-                )
-
-                Divider(thickness = 0.6.dp, color = Color(0xFFE0E0E0))
-
-                AccountSettingsItem(
-                    icon = Icons.Default.History,
-                    iconBackground = Color(0xFFE3F2FD),
-                    iconTint = Color(0xFF1565C0),
-                    title = "Order History",
-                    onClick = onOrderHistoryClick
                 )
 
                 Divider(thickness = 0.6.dp, color = Color(0xFFE0E0E0))

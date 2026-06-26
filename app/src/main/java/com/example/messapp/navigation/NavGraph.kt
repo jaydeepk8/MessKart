@@ -22,10 +22,10 @@ import com.example.messapp.ui.home.HomeScreen
 import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
 import com.example.messapp.ui.profile.ManageAddressesScreen
-import com.example.messapp.ui.profile.OrderHistoryScreen
 import com.example.messapp.ui.profile.PaymentMethodsScreen
 import com.example.messapp.ui.profile.PersonalInformationScreen
 import com.example.messapp.ui.profile.ProfileScreen
+import com.example.messapp.ui.profile.SubscriptionsAndOrdersScreen
 import com.example.messapp.ui.subscription.SubscriptionFlowScreen
 import com.example.messapp.ui.subscription.SubscriptionScreen
 import com.example.messapp.ui.subscription.SubscriptionViewModel
@@ -43,7 +43,7 @@ object Routes {
     const val PERSONAL_INFO = "personal_info"
     const val MANAGE_ADDRESSES = "manage_addresses"
     const val PAYMENT_METHODS = "payment_methods"
-    const val ORDER_HISTORY = "order_history"
+    const val SUBSCRIPTIONS_ORDERS = "subscriptions_orders"
 }
 
 @Composable
@@ -69,7 +69,7 @@ fun MessNavGraph() {
                         currentRoute == Routes.PERSONAL_INFO ||
                         currentRoute == Routes.MANAGE_ADDRESSES ||
                         currentRoute == Routes.PAYMENT_METHODS ||
-                        currentRoute == Routes.ORDER_HISTORY ||
+                        currentRoute == Routes.SUBSCRIPTIONS_ORDERS ||
                         currentRoute?.startsWith(Routes.SUBSCRIPTION_FLOW) == true ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
@@ -137,8 +137,8 @@ fun MessNavGraph() {
                     onPaymentMethodsClick = {
                         navController.navigate(Routes.PAYMENT_METHODS)
                     },
-                    onOrderHistoryClick = {
-                        navController.navigate(Routes.ORDER_HISTORY)
+                    onSubscriptionsAndOrdersClick = {
+                        navController.navigate(Routes.SUBSCRIPTIONS_ORDERS)
                     }
                 )
             }
@@ -163,8 +163,8 @@ fun MessNavGraph() {
                 )
             }
 
-            composable(Routes.ORDER_HISTORY) {
-                OrderHistoryScreen(
+            composable(Routes.SUBSCRIPTIONS_ORDERS) {
+                SubscriptionsAndOrdersScreen(
                     onBackClick = { navController.popBackStack() }
                 )
             }
