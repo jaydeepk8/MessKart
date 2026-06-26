@@ -30,8 +30,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.messapp.ui.theme.AppBackground
@@ -268,12 +270,12 @@ private fun AddCardSheet(
     onDismiss: () -> Unit,
     onSave: (SavedCard) -> Unit
 ) {
-    var number by remember { mutableStateOf("") }
-    var expiry by remember { mutableStateOf("") }
+    var number by remember { mutableStateOf(TextFieldValue("")) }
+    var expiry by remember { mutableStateOf(TextFieldValue("")) }
     var name by remember { mutableStateOf("") }
 
-    val digits = number.filter { it.isDigit() }
-    val canSave = digits.length >= 12 && expiry.length >= 4
+    val digits = number.text.filter { it.isDigit() }
+    val canSave = digits.length >= 12 && expiry.text.length >= 4
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -298,7 +300,12 @@ private fun AddCardSheet(
             OutlinedTextField(
                 value = number,
                 onValueChange = { input ->
-                    number = input.filter { it.isDigit() }.take(16).chunked(4).joinToString(" ")
+                    val formatted = input.text.filter { it.isDigit() }.take(16)
+                        .chunked(4).joinToString(" ")
+                    number = TextFieldValue(
+                        text = formatted,
+                        selection = TextRange(formatted.length)
+                    )
                 },
                 label = { Text("Card Number") },
                 placeholder = { Text("1234 5678 9012 3456") },
@@ -313,8 +320,13 @@ private fun AddCardSheet(
                 OutlinedTextField(
                     value = expiry,
                     onValueChange = { input ->
-                        val d = input.filter { it.isDigit() }.take(4)
-                        expiry = if (d.length <= 2) d else d.substring(0, 2) + "/" + d.substring(2)
+                        val d = input.text.filter { it.isDigit() }.take(4)
+                        val formatted =
+                            if (d.length <= 2) d else d.substring(0, 2) + "/" + d.substring(2)
+                        expiry = TextFieldValue(
+                            text = formatted,
+                            selection = TextRange(formatted.length)
+                        )
                     },
                     label = { Text("Expiry") },
                     placeholder = { Text("MM/YY") },
@@ -364,7 +376,7 @@ private fun AddCardSheet(
                         SavedCard(
                             brand = brandFor(digits),
                             last4 = digits.takeLast(4),
-                            expiry = expiry,
+                            expiry = expiry.text,
                             gradient = cardGradients[existingCount % cardGradients.size]
                         )
                     )
