@@ -68,8 +68,8 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 ProfileUserCard(
-                    userName = "Jaydeep Kulkarni",
-                    phoneNumber = "9888745238",
+                    userName = "Rohan Mehta",
+                    phoneNumber = "9876543210",
                     onEditClick = { showComingSoon("Profile editing") }
                 )
             }

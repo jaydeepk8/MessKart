@@ -139,8 +139,8 @@ fun MessNavGraph() {
 
             composable(Routes.PERSONAL_INFO) {
                 PersonalInformationScreen(
-                    initialName = "Jaydeep Kulkarni",
-                    initialPhone = "9888745238",
+                    initialName = "Rohan Mehta",
+                    initialPhone = "9876543210",
                     onBackClick = { navController.popBackStack() }
                 )
             }

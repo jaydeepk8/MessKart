@@ -356,7 +356,7 @@ private fun AddCardSheet(
                 value = name,
                 onValueChange = { name = it },
                 label = { Text("Name on Card") },
-                placeholder = { Text("e.g. Jaydeep Kulkarni") },
+                placeholder = { Text("e.g. Rohan Mehta") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,

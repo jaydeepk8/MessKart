@@ -51,7 +51,7 @@ fun PersonalInformationScreen(
     var fullName by remember { mutableStateOf(initialName) }
     var dateOfBirth by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("jaydeep.kulkarni@example.com") }
+    var email by remember { mutableStateOf("rohan.mehta@example.com") }
     var phone by remember { mutableStateOf(initialPhone) }
     var foodPreference by remember { mutableStateOf("Veg") }
     var mealPreference by remember { mutableStateOf("Both") }
