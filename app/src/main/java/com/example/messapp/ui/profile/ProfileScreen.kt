@@ -27,7 +27,8 @@ fun ProfileScreen(
     onPersonalInfoClick: () -> Unit = {},
     onManageAddressesClick: () -> Unit = {},
     onPaymentMethodsClick: () -> Unit = {},
-    onSubscriptionsAndOrdersClick: () -> Unit = {}
+    onSubscriptionsAndOrdersClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {}
 ) {
 
     var vegModeEnabled by rememberSaveable { mutableStateOf(false) }
@@ -99,7 +100,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 MoreSection(
-                    onNotificationsClick = { showComingSoon("Notifications") },
+                    onNotificationsClick = onNotificationsClick,
                     onHelpSupportClick = { showComingSoon("Help and support") }
                 )
             }
