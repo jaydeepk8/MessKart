@@ -10,9 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.messapp.ui.theme.AppPrimaryGreen
+import com.example.messapp.ui.theme.AppSoftGreen
 
 @Composable
 fun ProfileUserCard(
@@ -23,14 +26,11 @@ fun ProfileUserCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp)),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        )
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
@@ -42,47 +42,51 @@ fun ProfileUserCard(
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .background(
-                        color = Color(0xFFEDEDED),
-                        shape = CircleShape
-                    ),
+                    .background(color = AppSoftGreen, shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    tint = Color.Gray,
+                    tint = AppPrimaryGreen,
                     modifier = Modifier.size(28.dp)
                 )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = userName,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 18.sp
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
                     text = phoneNumber,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Box(
+                    modifier = Modifier
+                        .background(AppSoftGreen, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "Gold Member",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = AppPrimaryGreen
+                    )
+                }
             }
 
-            TextButton(
-                onClick = onEditClick
-            ) {
-                Text(
-                    text = "Edit",
-                    color = MaterialTheme.colorScheme.primary
-                )
+            TextButton(onClick = onEditClick) {
+                Text(text = "Edit", color = AppPrimaryGreen)
             }
         }
     }

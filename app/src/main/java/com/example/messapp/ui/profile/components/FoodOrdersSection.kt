@@ -12,8 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.messapp.ui.theme.AppPrimaryGreen
+import com.example.messapp.ui.theme.AppSoftGreen
 
 @Composable
 fun FoodOrdersSection(
@@ -38,38 +41,33 @@ fun FoodOrdersSection(
         )
 
         Card(
+            modifier = Modifier.shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp)),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
 
             Column {
 
                 AccountSettingsItem(
                     icon = Icons.Default.RestaurantMenu,
-                    iconBackground = Color(0xFFFFF1E6),
-                    iconTint = Color(0xFFFF6D00),
+                    iconBackground = AppSoftGreen,
+                    iconTint = AppPrimaryGreen,
                     title = "Subscriptions & Orders",
                     onClick = onSubscriptionsAndOrdersClick
                 )
 
-                Divider(
-                    thickness = 0.6.dp,
-                    color = Color(0xFFE0E0E0)
-                )
+                Divider(thickness = 0.6.dp, color = Color(0xFFE0E0E0))
 
                 AccountSettingsItem(
                     icon = Icons.Default.History,
-                    iconBackground = Color(0xFFE3F2FD),
-                    iconTint = Color(0xFF1565C0),
+                    iconBackground = AppSoftGreen,
+                    iconTint = AppPrimaryGreen,
                     title = "Order History",
                     onClick = onOrderHistoryClick
                 )
 
-                Divider(
-                    thickness = 0.6.dp,
-                    color = Color(0xFFE0E0E0)
-                )
+                Divider(thickness = 0.6.dp, color = Color(0xFFE0E0E0))
 
                 Row(
                     modifier = Modifier
@@ -80,14 +78,14 @@ fun FoodOrdersSection(
 
                     Surface(
                         shape = CircleShape,
-                        color = Color(0xFFE8F5E9),
+                        color = AppSoftGreen,
                         modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Eco,
                                 contentDescription = null,
-                                tint = Color(0xFF2E7D32),
+                                tint = AppPrimaryGreen,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
