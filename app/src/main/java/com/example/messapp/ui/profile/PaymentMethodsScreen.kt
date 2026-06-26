@@ -12,15 +12,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,6 +42,14 @@ private data class SavedCard(
     val gradient: List<Color>
 )
 
+private data class UpiMethod(
+    val name: String,
+    val detail: String?,
+    val icon: ImageVector,
+    val iconBackground: Color,
+    val iconTint: Color
+)
+
 private val LabelGray = Color(0xFF9AA0A6)
 private val SubTextGray = Color(0xFF667085)
 
@@ -51,14 +58,13 @@ private val SubTextGray = Color(0xFF667085)
 fun PaymentMethodsScreen(
     onBackClick: () -> Unit
 ) {
-    val cards = remember {
-        listOf(
-            SavedCard("VISA", "4242", "12/26", listOf(Color(0xFF2E1F6B), Color(0xFF4B3FB0))),
-            SavedCard("Mastercard", "8817", "05/28", listOf(Color(0xFF0F6B3A), Color(0xFF1FA45C)))
-        )
-    }
+    // TEMPORARY: seeded empty so the "no saved methods" state is visible.
+    // Once the database is wired, these get populated from the saved user data.
+    val cards = remember { mutableStateListOf<SavedCard>() }
+    val upiMethods = remember { mutableStateListOf<UpiMethod>() }
 
-    var selectedUpi by remember { mutableStateOf("Google Pay") }
+    val hasSavedMethods = cards.isNotEmpty() || upiMethods.isNotEmpty()
+    var selectedUpi by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -95,56 +101,58 @@ fun PaymentMethodsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ---------- Saved Cards ----------
-            SectionHeader(
-                title = "Saved Cards",
-                action = "Manage",
-                onAction = { notify("Manage cards is coming soon") }
-            )
+            if (hasSavedMethods) {
 
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                items(cards) { card ->
-                    PaymentCard(card = card, onEdit = { notify("Edit ${card.brand} card") })
+                // ---------- Saved Cards ----------
+                if (cards.isNotEmpty()) {
+                    SectionHeader(
+                        title = "Saved Cards",
+                        action = "Manage",
+                        onAction = { notify("Manage cards is coming soon") }
+                    )
+
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        items(cards) { card ->
+                            PaymentCard(card = card, onEdit = { notify("Edit ${card.brand} card") })
+                        }
+                    }
+
+                    Spacer(Modifier.height(24.dp))
                 }
+
+                // ---------- UPI ----------
+                if (upiMethods.isNotEmpty()) {
+                    SectionHeader(title = "Unified Payments (UPI)")
+
+                    upiMethods.forEachIndexed { index, method ->
+                        UpiRow(
+                            icon = method.icon,
+                            iconBackground = method.iconBackground,
+                            iconTint = method.iconTint,
+                            name = method.name,
+                            detail = method.detail,
+                            selected = selectedUpi == method.name,
+                            onClick = { selectedUpi = method.name }
+                        )
+                        if (index < upiMethods.lastIndex) Spacer(Modifier.height(12.dp))
+                    }
+
+                    Spacer(Modifier.height(24.dp))
+                }
+
+            } else {
+                EmptyPaymentState()
+                Spacer(Modifier.height(24.dp))
             }
-
-            Spacer(Modifier.height(24.dp))
-
-            // ---------- UPI ----------
-            SectionHeader(title = "Unified Payments (UPI)")
-
-            UpiRow(
-                icon = Icons.Default.AccountBalance,
-                iconBackground = Color(0xFFE8F0FF),
-                iconTint = Color(0xFF2962FF),
-                name = "Google Pay",
-                detail = "jaydeepk@oksbi",
-                selected = selectedUpi == "Google Pay",
-                onClick = { selectedUpi = "Google Pay" }
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            UpiRow(
-                icon = Icons.Default.Smartphone,
-                iconBackground = Color(0xFFF3E8FF),
-                iconTint = Color(0xFF7C4DFF),
-                name = "PhonePe",
-                detail = null,
-                selected = selectedUpi == "PhonePe",
-                onClick = { selectedUpi = "PhonePe" }
-            )
-
-            Spacer(Modifier.height(24.dp))
 
             // ---------- Digital Wallets ----------
             SectionHeader(title = "Digital Wallets")
 
             InternalBalanceCard(
-                balance = "₹250.00",
+                balance = "₹0.00",
                 onTopUp = { notify("Top up wallet is coming soon") }
             )
 
@@ -203,6 +211,54 @@ fun PaymentMethodsScreen(
             }
 
             Spacer(Modifier.height(28.dp))
+        }
+    }
+}
+
+@Composable
+private fun EmptyPaymentState() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, Color(0xFFEDEDED))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp, horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(AppSoftGreen, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CreditCard,
+                    contentDescription = null,
+                    tint = AppPrimaryGreen,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+            Spacer(Modifier.height(14.dp))
+            Text(
+                text = "No payment methods yet",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = "Add a card or UPI ID to check out faster on your tiffin orders and subscriptions.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = SubTextGray,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                lineHeight = 20.sp
+            )
         }
     }
 }
