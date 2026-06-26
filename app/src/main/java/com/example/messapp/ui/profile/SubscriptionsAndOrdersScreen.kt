@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.messapp.R
+import com.example.messapp.data.source.MessDataSource
 import com.example.messapp.ui.theme.AppBackground
 import com.example.messapp.ui.theme.AppPrimaryGreen
 import com.example.messapp.ui.theme.AppSoftGreen
@@ -50,6 +51,7 @@ private data class PastOrder(
 private data class ActiveSubscription(
     val planName: String,
     val messName: String,
+    val messCuisine: String,
     val daysLeft: Int,
     val tier: String,
     val nextMeal: String,
@@ -65,15 +67,19 @@ fun SubscriptionsAndOrdersScreen(
     onBackClick: () -> Unit,
     onManageSubscriptionClick: () -> Unit = {}
 ) {
+    // TEMPORARY: pulls a real mess so the card shows the subscribed mess's
+    // photo + name. Later this comes from the user's actual subscription.
     val subscription = remember {
+        val mess = MessDataSource.getMessById(2) // Green Leaf Tiffins
         ActiveSubscription(
             planName = "Monthly Gourmet Mess Plan",
-            messName = "The Spice Garden",
+            messName = mess.name,
+            messCuisine = mess.cuisine,
             daysLeft = 15,
             tier = "GOURMET TIER",
             nextMeal = "Lunch (12:30 PM)",
             nextMenu = "Chef's Signature Curry",
-            imageRes = R.drawable.b2
+            imageRes = mess.imageRes
         )
     }
 
@@ -218,15 +224,15 @@ private fun SubscriptionCard(
     ) {
         Column {
 
-            // Banner with tier badge
+            // Banner = subscribed mess photo, with its name overlaid
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(170.dp)
             ) {
                 Image(
                     painter = painterResource(subscription.imageRes),
-                    contentDescription = subscription.planName,
+                    contentDescription = subscription.messName,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -235,13 +241,15 @@ private fun SubscriptionCard(
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.45f))
+                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
                             )
                         )
                 )
+
+                // Tier badge (top-left)
                 Row(
                     modifier = Modifier
-                        .align(Alignment.BottomStart)
+                        .align(Alignment.TopStart)
                         .padding(14.dp)
                         .background(Color(0xFFEF6C00), RoundedCornerShape(8.dp))
                         .padding(horizontal = 10.dp, vertical = 5.dp),
@@ -262,6 +270,35 @@ private fun SubscriptionCard(
                         letterSpacing = 0.5.sp
                     )
                 }
+
+                // Subscribed mess name + cuisine (bottom-left)
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Storefront,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = subscription.messName,
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = subscription.messCuisine,
+                        color = Color.White.copy(alpha = 0.9f),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
 
             Column(modifier = Modifier.padding(16.dp)) {
@@ -273,25 +310,18 @@ private fun SubscriptionCard(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
+                            text = "PLAN",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color(0xFF9AA0A6),
+                            fontWeight = FontWeight.Medium,
+                            letterSpacing = 0.6.sp
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
                             text = subscription.planName,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(Modifier.height(4.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                Icons.Default.Storefront,
-                                contentDescription = null,
-                                tint = SubTextGray,
-                                modifier = Modifier.size(15.dp)
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = subscription.messName,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = SubTextGray
-                            )
-                        }
                     }
 
                     Box(
