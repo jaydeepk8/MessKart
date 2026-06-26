@@ -23,6 +23,7 @@ import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
 import com.example.messapp.ui.profile.ManageAddressesScreen
 import com.example.messapp.ui.profile.NotificationsScreen
+import com.example.messapp.ui.profile.OffersScreen
 import com.example.messapp.ui.profile.PaymentMethodsScreen
 import com.example.messapp.ui.profile.PersonalInformationScreen
 import com.example.messapp.ui.profile.ProfileScreen
@@ -46,6 +47,7 @@ object Routes {
     const val PAYMENT_METHODS = "payment_methods"
     const val SUBSCRIPTIONS_ORDERS = "subscriptions_orders"
     const val NOTIFICATIONS = "notifications"
+    const val OFFERS = "offers"
 }
 
 @Composable
@@ -73,6 +75,7 @@ fun MessNavGraph() {
                         currentRoute == Routes.PAYMENT_METHODS ||
                         currentRoute == Routes.SUBSCRIPTIONS_ORDERS ||
                         currentRoute == Routes.NOTIFICATIONS ||
+                        currentRoute == Routes.OFFERS ||
                         currentRoute?.startsWith(Routes.SUBSCRIPTION_FLOW) == true ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
@@ -145,6 +148,9 @@ fun MessNavGraph() {
                     },
                     onNotificationsClick = {
                         navController.navigate(Routes.NOTIFICATIONS)
+                    },
+                    onOffersClick = {
+                        navController.navigate(Routes.OFFERS)
                     }
                 )
             }
@@ -177,6 +183,12 @@ fun MessNavGraph() {
 
             composable(Routes.NOTIFICATIONS) {
                 NotificationsScreen(
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(Routes.OFFERS) {
+                OffersScreen(
                     onBackClick = { navController.popBackStack() }
                 )
             }

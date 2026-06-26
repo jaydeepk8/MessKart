@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MoreSection(
     onNotificationsClick: () -> Unit,
+    onOffersClick: () -> Unit,
     onHelpSupportClick: () -> Unit
 ) {
     Column(
@@ -47,6 +49,16 @@ fun MoreSection(
                     iconTint = Color.DarkGray,
                     title = "Notifications",
                     onClick = onNotificationsClick
+                )
+
+                Divider(thickness = 0.6.dp, color = Color(0xFFE0E0E0))
+
+                AccountSettingsItem(
+                    icon = Icons.Default.LocalOffer,
+                    iconBackground = Color(0xFFF3E8FF),
+                    iconTint = Color(0xFF7C4DFF),
+                    title = "Offers & Promos",
+                    onClick = onOffersClick
                 )
 
                 Divider(thickness = 0.6.dp, color = Color(0xFFE0E0E0))
