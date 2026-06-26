@@ -21,6 +21,7 @@ import com.example.messapp.ui.details.MessDetailsRoute
 import com.example.messapp.ui.home.HomeScreen
 import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
+import com.example.messapp.ui.profile.PersonalInformationScreen
 import com.example.messapp.ui.profile.ProfileScreen
 import com.example.messapp.ui.subscription.SubscriptionFlowScreen
 import com.example.messapp.ui.subscription.SubscriptionScreen
@@ -36,6 +37,7 @@ object Routes {
     const val MESS_DETAILS = "mess_details"
     const val SUBSCRIPTION_FLOW = "subscription_flow"
     const val SIGN_UP      = "sign_up"
+    const val PERSONAL_INFO = "personal_info"
 }
 
 @Composable
@@ -58,6 +60,7 @@ fun MessNavGraph() {
                         currentRoute == Routes.SIGN_UP ||
                         currentRoute == Routes.ORDER_SUMMARY ||
                         currentRoute == Routes.MAP ||
+                        currentRoute == Routes.PERSONAL_INFO ||
                         currentRoute?.startsWith(Routes.SUBSCRIPTION_FLOW) == true ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
@@ -115,7 +118,19 @@ fun MessNavGraph() {
             }
 
             composable(Routes.PROFILE) {
-                ProfileScreen()
+                ProfileScreen(
+                    onPersonalInfoClick = {
+                        navController.navigate(Routes.PERSONAL_INFO)
+                    }
+                )
+            }
+
+            composable(Routes.PERSONAL_INFO) {
+                PersonalInformationScreen(
+                    initialName = "Jaydeep Kulkarni",
+                    initialPhone = "9888745238",
+                    onBackClick = { navController.popBackStack() }
+                )
             }
 
             composable(
