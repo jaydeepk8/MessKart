@@ -5,13 +5,11 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val LightColorScheme = lightColorScheme(
-    primary = AppPrimaryGreen,
-    secondary = AppSoftGreen,
+    primary = Purple40,
+    secondary = PurpleGrey40,
     tertiary = Pink40,
     background = AppBackground,
-    surface = AppBackground,
-    surfaceVariant = AppCardBackground,
-    onSurfaceVariant = AppTextSecondary
+    surface = AppBackground
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
