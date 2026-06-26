@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Wc
-import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,7 +54,6 @@ fun PersonalInformationScreen(
     var email by remember { mutableStateOf("jaydeep.kulkarni@example.com") }
     var phone by remember { mutableStateOf(initialPhone) }
     var foodPreference by remember { mutableStateOf("Veg") }
-    var spiceLevel by remember { mutableStateOf("Medium") }
     var mealPreference by remember { mutableStateOf("Both") }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -167,16 +165,6 @@ fun PersonalInformationScreen(
                 options = listOf("Veg", "Non-Veg", "Both"),
                 selected = foodPreference,
                 onSelect = { foodPreference = it }
-            )
-
-            ChoiceInfoCard(
-                icon = Icons.Default.Whatshot,
-                iconBackground = Color(0xFFFFEBEE),
-                iconTint = Color(0xFFE53935),
-                label = "Spice Level",
-                options = listOf("Mild", "Medium", "Spicy"),
-                selected = spiceLevel,
-                onSelect = { spiceLevel = it }
             )
 
             ChoiceInfoCard(
