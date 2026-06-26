@@ -97,6 +97,8 @@ fun PersonalInformationScreen(
 
             EditableInfoRow(
                 icon = Icons.Default.Person,
+                iconBackground = Color(0xFFFFEDE5),
+                iconTint = Color(0xFFFF5722),
                 label = "Full Name",
                 value = fullName,
                 onValueChange = { fullName = it },
@@ -106,6 +108,8 @@ fun PersonalInformationScreen(
 
             EditableInfoRow(
                 icon = Icons.Default.Cake,
+                iconBackground = Color(0xFFFCE4EC),
+                iconTint = Color(0xFFE91E63),
                 label = "Date of Birth",
                 value = dateOfBirth,
                 onValueChange = { dateOfBirth = it },
@@ -114,6 +118,8 @@ fun PersonalInformationScreen(
 
             ChoiceInfoCard(
                 icon = Icons.Default.Wc,
+                iconBackground = Color(0xFFF3E8FF),
+                iconTint = Color(0xFF7C4DFF),
                 label = "Gender",
                 options = listOf("Male", "Female", "Other"),
                 selected = gender,
@@ -126,6 +132,8 @@ fun PersonalInformationScreen(
 
             EditableInfoRow(
                 icon = Icons.Default.Email,
+                iconBackground = Color(0xFFE8F0FF),
+                iconTint = Color(0xFF2962FF),
                 label = "Primary Email",
                 value = email,
                 onValueChange = { email = it },
@@ -136,6 +144,8 @@ fun PersonalInformationScreen(
 
             EditableInfoRow(
                 icon = Icons.Default.Phone,
+                iconBackground = Color(0xFFE0F2F1),
+                iconTint = Color(0xFF00897B),
                 label = "Phone Number",
                 value = phone,
                 onValueChange = { input -> phone = input.filter { it.isDigit() }.take(10) },
@@ -149,6 +159,8 @@ fun PersonalInformationScreen(
 
             EditableInfoRow(
                 icon = Icons.Default.LocationOn,
+                iconBackground = Color(0xFFE3F2FD),
+                iconTint = Color(0xFF1565C0),
                 label = "Delivery Address",
                 value = address,
                 onValueChange = { address = it },
@@ -159,6 +171,8 @@ fun PersonalInformationScreen(
 
             ChoiceInfoCard(
                 icon = Icons.Default.RestaurantMenu,
+                iconBackground = Color(0xFFFFF1E6),
+                iconTint = Color(0xFFFF6D00),
                 label = "Food Preference",
                 options = listOf("Veg", "Non-Veg", "Both"),
                 selected = foodPreference,
@@ -206,6 +220,8 @@ private fun SectionHeader(text: String) {
 @Composable
 private fun EditableInfoRow(
     icon: ImageVector,
+    iconBackground: Color,
+    iconTint: Color,
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -225,7 +241,7 @@ private fun EditableInfoRow(
             verticalAlignment = Alignment.Top
         ) {
 
-            IconTile(icon)
+            IconTile(icon, iconBackground, iconTint)
 
             Spacer(Modifier.width(12.dp))
 
@@ -272,7 +288,7 @@ private fun EditableInfoRow(
                 Icon(
                     imageVector = if (editing) Icons.Default.Check else Icons.Default.Edit,
                     contentDescription = if (editing) "Done" else "Edit $label",
-                    tint = AppPrimaryGreen,
+                    tint = if (editing) AppPrimaryGreen else Color(0xFF9AA0A6),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -283,6 +299,8 @@ private fun EditableInfoRow(
 @Composable
 private fun ChoiceInfoCard(
     icon: ImageVector,
+    iconBackground: Color,
+    iconTint: Color,
     label: String,
     options: List<String>,
     selected: String,
@@ -295,7 +313,7 @@ private fun ChoiceInfoCard(
                 .padding(14.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconTile(icon)
+                IconTile(icon, iconBackground, iconTint)
                 Spacer(Modifier.width(12.dp))
                 FieldLabel(label)
             }
@@ -354,17 +372,21 @@ private fun InfoCard(content: @Composable () -> Unit) {
 }
 
 @Composable
-private fun IconTile(icon: ImageVector) {
+private fun IconTile(
+    icon: ImageVector,
+    background: Color,
+    tint: Color
+) {
     Box(
         modifier = Modifier
             .size(40.dp)
-            .background(AppSoftGreen, RoundedCornerShape(12.dp)),
+            .background(background, RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = AppPrimaryGreen,
+            tint = tint,
             modifier = Modifier.size(20.dp)
         )
     }
