@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -29,7 +28,7 @@ fun MessItemCard(
     onClick: (Mess) -> Unit
 ) {
 
-    val cardColor = Color.White
+    val cardColor = Color(0xFFF6F7FB)
     val ratingBg = Color(0xFFE4F8EB)
     val ratingText = Color(0xFF159947)
 
@@ -46,7 +45,6 @@ fun MessItemCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 10.dp)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(22.dp))
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
