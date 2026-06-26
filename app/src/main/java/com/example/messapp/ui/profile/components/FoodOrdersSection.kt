@@ -12,11 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.messapp.ui.theme.AppPrimaryGreen
-import com.example.messapp.ui.theme.AppSoftGreen
 
 @Composable
 fun FoodOrdersSection(
@@ -41,7 +38,6 @@ fun FoodOrdersSection(
         )
 
         Card(
-            modifier = Modifier.shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp)),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -51,8 +47,8 @@ fun FoodOrdersSection(
 
                 AccountSettingsItem(
                     icon = Icons.Default.RestaurantMenu,
-                    iconBackground = AppSoftGreen,
-                    iconTint = AppPrimaryGreen,
+                    iconBackground = Color(0xFFFFF1E6),
+                    iconTint = Color(0xFFFF6D00),
                     title = "Subscriptions & Orders",
                     onClick = onSubscriptionsAndOrdersClick
                 )
@@ -61,8 +57,8 @@ fun FoodOrdersSection(
 
                 AccountSettingsItem(
                     icon = Icons.Default.History,
-                    iconBackground = AppSoftGreen,
-                    iconTint = AppPrimaryGreen,
+                    iconBackground = Color(0xFFE3F2FD),
+                    iconTint = Color(0xFF1565C0),
                     title = "Order History",
                     onClick = onOrderHistoryClick
                 )
@@ -78,14 +74,14 @@ fun FoodOrdersSection(
 
                     Surface(
                         shape = CircleShape,
-                        color = AppSoftGreen,
+                        color = Color(0xFFE8F5E9),
                         modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Eco,
                                 contentDescription = null,
-                                tint = AppPrimaryGreen,
+                                tint = Color(0xFF2E7D32),
                                 modifier = Modifier.size(20.dp)
                             )
                         }

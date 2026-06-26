@@ -8,11 +8,8 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.messapp.ui.theme.AppPrimaryGreen
-import com.example.messapp.ui.theme.AppSoftGreen
 
 @Composable
 fun MoreSection(
@@ -35,7 +32,6 @@ fun MoreSection(
         )
 
         Card(
-            modifier = Modifier.shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp)),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -45,8 +41,8 @@ fun MoreSection(
 
                 AccountSettingsItem(
                     icon = Icons.Default.Notifications,
-                    iconBackground = AppSoftGreen,
-                    iconTint = AppPrimaryGreen,
+                    iconBackground = Color(0xFFF1F1F1),
+                    iconTint = Color.DarkGray,
                     title = "Notifications",
                     onClick = onNotificationsClick
                 )
@@ -55,8 +51,8 @@ fun MoreSection(
 
                 AccountSettingsItem(
                     icon = Icons.Default.HelpOutline,
-                    iconBackground = AppSoftGreen,
-                    iconTint = AppPrimaryGreen,
+                    iconBackground = Color(0xFFF1F1F1),
+                    iconTint = Color.DarkGray,
                     title = "Help & Support",
                     onClick = onHelpSupportClick
                 )
