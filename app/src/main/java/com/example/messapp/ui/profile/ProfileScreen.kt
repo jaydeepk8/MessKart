@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    onPersonalInfoClick: () -> Unit = {}
+    onPersonalInfoClick: () -> Unit = {},
+    onManageAddressesClick: () -> Unit = {}
 ) {
 
     var vegModeEnabled by rememberSaveable { mutableStateOf(false) }
@@ -77,7 +78,7 @@ fun ProfileScreen(
 
                 AccountSettingsSection(
                     onPersonalInfoClick = onPersonalInfoClick,
-                    onManageAddressesClick = { showComingSoon("Address management") },
+                    onManageAddressesClick = onManageAddressesClick,
                     onPaymentMethodsClick = { showComingSoon("Payment methods") }
                 )
             }

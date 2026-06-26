@@ -21,6 +21,7 @@ import com.example.messapp.ui.details.MessDetailsRoute
 import com.example.messapp.ui.home.HomeScreen
 import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
+import com.example.messapp.ui.profile.ManageAddressesScreen
 import com.example.messapp.ui.profile.PersonalInformationScreen
 import com.example.messapp.ui.profile.ProfileScreen
 import com.example.messapp.ui.subscription.SubscriptionFlowScreen
@@ -38,6 +39,7 @@ object Routes {
     const val SUBSCRIPTION_FLOW = "subscription_flow"
     const val SIGN_UP      = "sign_up"
     const val PERSONAL_INFO = "personal_info"
+    const val MANAGE_ADDRESSES = "manage_addresses"
 }
 
 @Composable
@@ -61,6 +63,7 @@ fun MessNavGraph() {
                         currentRoute == Routes.ORDER_SUMMARY ||
                         currentRoute == Routes.MAP ||
                         currentRoute == Routes.PERSONAL_INFO ||
+                        currentRoute == Routes.MANAGE_ADDRESSES ||
                         currentRoute?.startsWith(Routes.SUBSCRIPTION_FLOW) == true ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
@@ -121,6 +124,9 @@ fun MessNavGraph() {
                 ProfileScreen(
                     onPersonalInfoClick = {
                         navController.navigate(Routes.PERSONAL_INFO)
+                    },
+                    onManageAddressesClick = {
+                        navController.navigate(Routes.MANAGE_ADDRESSES)
                     }
                 )
             }
@@ -129,6 +135,12 @@ fun MessNavGraph() {
                 PersonalInformationScreen(
                     initialName = "Jaydeep Kulkarni",
                     initialPhone = "9888745238",
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(Routes.MANAGE_ADDRESSES) {
+                ManageAddressesScreen(
                     onBackClick = { navController.popBackStack() }
                 )
             }
