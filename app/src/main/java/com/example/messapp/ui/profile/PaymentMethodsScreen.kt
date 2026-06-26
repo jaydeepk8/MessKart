@@ -10,8 +10,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,6 +30,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.messapp.ui.theme.AppBackground
@@ -53,6 +57,21 @@ private data class UpiMethod(
 private val LabelGray = Color(0xFF9AA0A6)
 private val SubTextGray = Color(0xFF667085)
 
+private val cardGradients = listOf(
+    listOf(Color(0xFF2E1F6B), Color(0xFF4B3FB0)),
+    listOf(Color(0xFF0F6B3A), Color(0xFF1FA45C)),
+    listOf(Color(0xFF8E1F4B), Color(0xFFD13A6E)),
+    listOf(Color(0xFF1A3A6B), Color(0xFF2E6BB0))
+)
+
+private fun brandFor(digits: String): String = when (digits.firstOrNull()) {
+    '4' -> "VISA"
+    '5', '2' -> "Mastercard"
+    '3' -> "Amex"
+    '6' -> "RuPay"
+    else -> "Card"
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentMethodsScreen(
@@ -65,6 +84,9 @@ fun PaymentMethodsScreen(
 
     val hasSavedMethods = cards.isNotEmpty() || upiMethods.isNotEmpty()
     var selectedUpi by remember { mutableStateOf("") }
+
+    var showCardSheet by remember { mutableStateOf(false) }
+    var showUpiSheet by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -200,20 +222,254 @@ fun PaymentMethodsScreen(
                     icon = Icons.Default.AddCard,
                     label = "Add New Card",
                     modifier = Modifier.weight(1f),
-                    onClick = { notify("Add new card is coming soon") }
+                    onClick = { showCardSheet = true }
                 )
                 AddOptionTile(
                     icon = Icons.Default.QrCode,
                     label = "Add UPI ID",
                     modifier = Modifier.weight(1f),
-                    onClick = { notify("Add UPI ID is coming soon") }
+                    onClick = { showUpiSheet = true }
                 )
             }
 
             Spacer(Modifier.height(28.dp))
         }
     }
+
+    if (showCardSheet) {
+        AddCardSheet(
+            existingCount = cards.size,
+            onDismiss = { showCardSheet = false },
+            onSave = { card ->
+                cards.add(card)
+                showCardSheet = false
+                notify("${card.brand} card added")
+            }
+        )
+    }
+
+    if (showUpiSheet) {
+        AddUpiSheet(
+            onDismiss = { showUpiSheet = false },
+            onSave = { upi ->
+                upiMethods.add(upi)
+                selectedUpi = upi.name
+                showUpiSheet = false
+                notify("UPI ID added")
+            }
+        )
+    }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddCardSheet(
+    existingCount: Int,
+    onDismiss: () -> Unit,
+    onSave: (SavedCard) -> Unit
+) {
+    var number by remember { mutableStateOf("") }
+    var expiry by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+
+    val digits = number.filter { it.isDigit() }
+    val canSave = digits.length >= 12 && expiry.length >= 4
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = Color.White
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(
+                text = "Add New Card",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            OutlinedTextField(
+                value = number,
+                onValueChange = { input ->
+                    number = input.filter { it.isDigit() }.take(16).chunked(4).joinToString(" ")
+                },
+                label = { Text("Card Number") },
+                placeholder = { Text("1234 5678 9012 3456") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = fieldColors()
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = expiry,
+                    onValueChange = { input ->
+                        val d = input.filter { it.isDigit() }.take(4)
+                        expiry = if (d.length <= 2) d else d.substring(0, 2) + "/" + d.substring(2)
+                    },
+                    label = { Text("Expiry") },
+                    placeholder = { Text("MM/YY") },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = fieldColors()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                        .background(Color(0xFFF6F7FB), RoundedCornerShape(12.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (digits.isEmpty()) "Card type" else brandFor(digits),
+                        color = if (digits.isEmpty()) LabelGray else Color(0xFF202124),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Name on Card") },
+                placeholder = { Text("e.g. Jaydeep Kulkarni") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                colors = fieldColors()
+            )
+
+            Text(
+                text = "We never store your full card number or CVV.",
+                style = MaterialTheme.typography.labelSmall,
+                color = LabelGray
+            )
+
+            Button(
+                onClick = {
+                    onSave(
+                        SavedCard(
+                            brand = brandFor(digits),
+                            last4 = digits.takeLast(4),
+                            expiry = expiry,
+                            gradient = cardGradients[existingCount % cardGradients.size]
+                        )
+                    )
+                },
+                enabled = canSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppPrimaryGreen,
+                    disabledContainerColor = Color(0xFFCDE3AE)
+                )
+            ) {
+                Text("Save Card", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddUpiSheet(
+    onDismiss: () -> Unit,
+    onSave: (UpiMethod) -> Unit
+) {
+    var upiId by remember { mutableStateOf("") }
+    val canSave = upiId.contains("@") && upiId.trim().length >= 3
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = Color.White
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(
+                text = "Add UPI ID",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "Pay directly from your bank using your UPI ID.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = SubTextGray
+            )
+
+            OutlinedTextField(
+                value = upiId,
+                onValueChange = { upiId = it.filterNot { ch -> ch.isWhitespace() } },
+                label = { Text("UPI ID") },
+                placeholder = { Text("name@bank") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                colors = fieldColors()
+            )
+
+            Button(
+                onClick = {
+                    onSave(
+                        UpiMethod(
+                            name = upiId.trim(),
+                            detail = "UPI",
+                            icon = Icons.Default.AccountBalance,
+                            iconBackground = Color(0xFFE8F0FF),
+                            iconTint = Color(0xFF2962FF)
+                        )
+                    )
+                },
+                enabled = canSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppPrimaryGreen,
+                    disabledContainerColor = Color(0xFFCDE3AE)
+                )
+            ) {
+                Text("Save UPI ID", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun fieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = AppPrimaryGreen,
+    unfocusedBorderColor = Color.Black.copy(alpha = 0.25f),
+    focusedLabelColor = AppPrimaryGreen,
+    focusedContainerColor = Color.White,
+    unfocusedContainerColor = Color.White,
+    cursorColor = AppPrimaryGreen
+)
 
 @Composable
 private fun EmptyPaymentState() {
