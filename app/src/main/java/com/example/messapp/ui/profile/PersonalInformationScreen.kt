@@ -16,11 +16,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.RestaurantMenu
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Wc
+import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,8 +54,9 @@ fun PersonalInformationScreen(
     var gender by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("jaydeep.kulkarni@example.com") }
     var phone by remember { mutableStateOf(initialPhone) }
-    var address by remember { mutableStateOf("") }
     var foodPreference by remember { mutableStateOf("Veg") }
+    var spiceLevel by remember { mutableStateOf("Medium") }
+    var mealPreference by remember { mutableStateOf("Both") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -155,19 +157,7 @@ fun PersonalInformationScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            SectionHeader("Address & Preferences")
-
-            EditableInfoRow(
-                icon = Icons.Default.LocationOn,
-                iconBackground = Color(0xFFE3F2FD),
-                iconTint = Color(0xFF1565C0),
-                label = "Delivery Address",
-                value = address,
-                onValueChange = { address = it },
-                placeholder = "Flat / House no, Street, Area, City, Pincode",
-                capitalization = KeyboardCapitalization.Words,
-                singleLine = false
-            )
+            SectionHeader("Food Preferences")
 
             ChoiceInfoCard(
                 icon = Icons.Default.RestaurantMenu,
@@ -177,6 +167,26 @@ fun PersonalInformationScreen(
                 options = listOf("Veg", "Non-Veg", "Both"),
                 selected = foodPreference,
                 onSelect = { foodPreference = it }
+            )
+
+            ChoiceInfoCard(
+                icon = Icons.Default.Whatshot,
+                iconBackground = Color(0xFFFFEBEE),
+                iconTint = Color(0xFFE53935),
+                label = "Spice Level",
+                options = listOf("Mild", "Medium", "Spicy"),
+                selected = spiceLevel,
+                onSelect = { spiceLevel = it }
+            )
+
+            ChoiceInfoCard(
+                icon = Icons.Default.Schedule,
+                iconBackground = Color(0xFFEDE7F6),
+                iconTint = Color(0xFF5E35B1),
+                label = "Meal Preference",
+                options = listOf("Lunch", "Dinner", "Both"),
+                selected = mealPreference,
+                onSelect = { mealPreference = it }
             )
 
             Spacer(Modifier.height(24.dp))
