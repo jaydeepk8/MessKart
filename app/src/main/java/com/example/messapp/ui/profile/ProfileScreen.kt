@@ -26,7 +26,8 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(
     onPersonalInfoClick: () -> Unit = {},
     onManageAddressesClick: () -> Unit = {},
-    onPaymentMethodsClick: () -> Unit = {}
+    onPaymentMethodsClick: () -> Unit = {},
+    onOrderHistoryClick: () -> Unit = {}
 ) {
 
     var vegModeEnabled by rememberSaveable { mutableStateOf(false) }
@@ -91,7 +92,7 @@ fun ProfileScreen(
                     vegModeEnabled = vegModeEnabled,
                     onVegModeToggle = { vegModeEnabled = it },
                     onSubscriptionsAndOrdersClick = { showComingSoon("Subscriptions and orders") },
-                    onOrderHistoryClick = { showComingSoon("Order history") }
+                    onOrderHistoryClick = onOrderHistoryClick
                 )
             }
 

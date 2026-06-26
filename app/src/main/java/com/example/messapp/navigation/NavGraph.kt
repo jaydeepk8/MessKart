@@ -22,6 +22,7 @@ import com.example.messapp.ui.home.HomeScreen
 import com.example.messapp.ui.map.MapScreen
 import com.example.messapp.ui.order.OrderSummaryScreen
 import com.example.messapp.ui.profile.ManageAddressesScreen
+import com.example.messapp.ui.profile.OrderHistoryScreen
 import com.example.messapp.ui.profile.PaymentMethodsScreen
 import com.example.messapp.ui.profile.PersonalInformationScreen
 import com.example.messapp.ui.profile.ProfileScreen
@@ -42,6 +43,7 @@ object Routes {
     const val PERSONAL_INFO = "personal_info"
     const val MANAGE_ADDRESSES = "manage_addresses"
     const val PAYMENT_METHODS = "payment_methods"
+    const val ORDER_HISTORY = "order_history"
 }
 
 @Composable
@@ -67,6 +69,7 @@ fun MessNavGraph() {
                         currentRoute == Routes.PERSONAL_INFO ||
                         currentRoute == Routes.MANAGE_ADDRESSES ||
                         currentRoute == Routes.PAYMENT_METHODS ||
+                        currentRoute == Routes.ORDER_HISTORY ||
                         currentRoute?.startsWith(Routes.SUBSCRIPTION_FLOW) == true ||
                         currentRoute?.startsWith(Routes.MESS_DETAILS) == true
 
@@ -133,6 +136,9 @@ fun MessNavGraph() {
                     },
                     onPaymentMethodsClick = {
                         navController.navigate(Routes.PAYMENT_METHODS)
+                    },
+                    onOrderHistoryClick = {
+                        navController.navigate(Routes.ORDER_HISTORY)
                     }
                 )
             }
@@ -153,6 +159,12 @@ fun MessNavGraph() {
 
             composable(Routes.PAYMENT_METHODS) {
                 PaymentMethodsScreen(
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(Routes.ORDER_HISTORY) {
+                OrderHistoryScreen(
                     onBackClick = { navController.popBackStack() }
                 )
             }
