@@ -31,7 +31,7 @@ fun SubscriptionPlanCard(
 ) {
 
     val greenPrimary = Color(0xFF8BC34A)
-    val lightCard = Color(0xFFF4F6F8)
+    val lightCard = Color.White
     val softGreen = Color(0xFFE7F6EC)
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -47,7 +47,7 @@ fun SubscriptionPlanCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = lightCard),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(3.dp)
     ) {
 
         Column(modifier = Modifier.padding(16.dp)) {

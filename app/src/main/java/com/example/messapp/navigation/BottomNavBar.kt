@@ -21,7 +21,7 @@ fun BottomNavBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val primaryPurple = Color(0xFF4B4ACF)
+    val primaryGreen  = Color(0xFF8BC34A)
     val inactiveGray  = Color(0xFF9E9E9E)
     val barBackground = Color.White
 
@@ -46,8 +46,8 @@ fun BottomNavBar(
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = Color.Transparent,
-                    selectedIconColor = primaryPurple,
-                    selectedTextColor = primaryPurple,
+                    selectedIconColor = primaryGreen,
+                    selectedTextColor = primaryGreen,
                     unselectedIconColor = inactiveGray,
                     unselectedTextColor = inactiveGray
                 ),

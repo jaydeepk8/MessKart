@@ -28,7 +28,7 @@ fun MessItemCard(
     onClick: (Mess) -> Unit
 ) {
 
-    val cardColor = Color(0xFFF6F7FB)
+    val cardColor = Color.White
     val ratingBg = Color(0xFFE4F8EB)
     val ratingText = Color(0xFF159947)
 
@@ -57,7 +57,7 @@ fun MessItemCard(
         colors = CardDefaults.cardColors(
             containerColor = cardColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),

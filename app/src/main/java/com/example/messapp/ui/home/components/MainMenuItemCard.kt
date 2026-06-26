@@ -52,9 +52,9 @@ fun MainMenuItemCard(
             .padding(horizontal = 12.dp, vertical = 7.dp),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF7F9FB)
+            containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
 
         Row(
