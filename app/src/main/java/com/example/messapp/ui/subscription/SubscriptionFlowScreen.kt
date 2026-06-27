@@ -31,13 +31,18 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -47,9 +52,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -96,20 +104,26 @@ fun SubscriptionFlowScreen(
     val mess = remember(messId) { MessDataSource.getMessById(messId) }
     val plans = remember {
         listOf(
-            PlanChoice("Trial", "1 meal to test taste and quality", 1, 120, 0),
             PlanChoice("Weekly", "14 meals, ideal for PG and hostel stays", 14, 1400, 30),
             PlanChoice("Monthly", "60 meals with the best savings", 60, 5200, 0)
         )
     }
     val steps = listOf("Plan", "Meal", "Schedule", "Address", "Review")
 
+    val homeDeliveryAvailable = remember(messId) {
+        mess.tags.any { it.contains("Home Delivery", ignoreCase = true) }
+    }
+
     var step by rememberSaveable { mutableIntStateOf(0) }
     var selectedPlan by rememberSaveable { mutableStateOf("Weekly") }
+    var serviceType by rememberSaveable {
+        mutableStateOf(if (homeDeliveryAvailable) "Delivery" else "Dine in")
+    }
     var mealTime by rememberSaveable { mutableStateOf("Lunch & Dinner") }
     var foodType by rememberSaveable { mutableStateOf("Veg") }
     var specialRequest by rememberSaveable { mutableStateOf("") }
     var startDate by rememberSaveable { mutableStateOf("Tomorrow") }
-    var timeSlot by rememberSaveable { mutableStateOf("12:30 PM - 2:00 PM") }
+    var timeSlot by rememberSaveable { mutableStateOf("Lunch (12:30 - 1:30 PM)") }
     var addressType by rememberSaveable { mutableStateOf("Use saved address") }
     var address by rememberSaveable { mutableStateOf("123 Main Street, Apt 4B") }
     var paymentMethod by rememberSaveable { mutableStateOf("UPI") }
@@ -212,9 +226,12 @@ fun SubscriptionFlowScreen(
                 when (step) {
                     0 -> PlanStep(plans, selectedPlan) { selectedPlan = it }
                     1 -> PreferenceStep(
+                        serviceType = serviceType,
+                        homeDeliveryAvailable = homeDeliveryAvailable,
                         mealTime = mealTime,
                         foodType = foodType,
                         specialRequest = specialRequest,
+                        onServiceTypeChange = { serviceType = it },
                         onMealTimeChange = { mealTime = it },
                         onFoodTypeChange = { foodType = it },
                         onSpecialRequestChange = { specialRequest = it }
@@ -235,6 +252,7 @@ fun SubscriptionFlowScreen(
                         messName = mess.name,
                         messImageRes = mess.imageRes,
                         plan = plan,
+                        serviceType = serviceType,
                         mealTime = mealTime,
                         foodType = foodType,
                         startDate = startDate,
@@ -310,14 +328,32 @@ private fun PlanStep(
 
 @Composable
 private fun PreferenceStep(
+    serviceType: String,
+    homeDeliveryAvailable: Boolean,
     mealTime: String,
     foodType: String,
     specialRequest: String,
+    onServiceTypeChange: (String) -> Unit,
     onMealTimeChange: (String) -> Unit,
     onFoodTypeChange: (String) -> Unit,
     onSpecialRequestChange: (String) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+        ChoiceSection("Service Type", Icons.Default.Storefront) {
+            ChoiceGroup(
+                options = if (homeDeliveryAvailable) listOf("Delivery", "Dine in") else listOf("Dine in"),
+                selected = serviceType,
+                onSelected = onServiceTypeChange
+            )
+            if (!homeDeliveryAvailable) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "This mess offers dine-in only.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = AppTextSecondary
+                )
+            }
+        }
         ChoiceSection("Meal Time", Icons.Default.Schedule) {
             ChoiceGroup(
                 options = listOf("Lunch only", "Dinner only", "Lunch & Dinner"),
@@ -327,7 +363,7 @@ private fun PreferenceStep(
         }
         ChoiceSection("Food Type", Icons.Default.Restaurant) {
             ChoiceGroup(
-                options = listOf("Veg", "Non-Veg", "Egg"),
+                options = listOf("Veg", "Non-Veg"),
                 selected = foodType,
                 onSelected = onFoodTypeChange
             )
@@ -357,20 +393,130 @@ private fun ScheduleStep(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
         ChoiceSection("Start Date", Icons.Default.CalendarMonth) {
-            ChoiceGroup(
-                options = listOf("Today", "Tomorrow", "Next Monday"),
-                selected = startDate,
-                onSelected = onStartDateChange
+            StartDateSelector(
+                startDate = startDate,
+                onStartDateChange = onStartDateChange
             )
         }
-        ChoiceSection("Preferred Slot", Icons.Default.Schedule) {
+        ChoiceSection("Preferred Meal Time", Icons.Default.Schedule) {
             ChoiceGroup(
-                options = listOf("12:30 PM - 2:00 PM", "7:30 PM - 9:00 PM", "Flexible"),
+                options = listOf(
+                    "Lunch (12:30 - 1:30 PM)",
+                    "Dinner (8:00 - 9:00 PM)",
+                    "Flexible timing"
+                ),
                 selected = timeSlot,
                 onSelected = onTimeSlotChange
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StartDateSelector(
+    startDate: String,
+    onStartDateChange: (String) -> Unit
+) {
+    var showPicker by remember { mutableStateOf(false) }
+    val isPreset = startDate == "Today" || startDate == "Tomorrow"
+
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        OptionPill("Today", startDate == "Today") { onStartDateChange("Today") }
+        OptionPill("Tomorrow", startDate == "Tomorrow") { onStartDateChange("Tomorrow") }
+
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(14.dp))
+                .background(if (!isPreset) AppPrimaryGreen else AppSoftGreen.copy(alpha = 0.7f))
+                .clickable { showPicker = true }
+                .padding(horizontal = 18.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Default.CalendarMonth,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = if (!isPreset) Color.White else AppPrimaryGreen
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = if (!isPreset) startDate else "Pick a date",
+                color = if (!isPreset) Color.White else AppTextPrimary,
+                fontWeight = if (!isPreset) FontWeight.Bold else FontWeight.Medium
+            )
+        }
+    }
+
+    if (showPicker) {
+        val todayStart = remember { startOfTodayMillis() }
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = todayStart,
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                    utcTimeMillis >= todayStart
+            }
+        )
+
+        val pickerColors = DatePickerDefaults.colors(
+            containerColor = AppBackground,
+            selectedDayContainerColor = AppPrimaryGreen,
+            selectedDayContentColor = Color.White,
+            todayDateBorderColor = AppPrimaryGreen,
+            todayContentColor = AppPrimaryGreen,
+            selectedYearContainerColor = AppPrimaryGreen,
+            selectedYearContentColor = Color.White
+        )
+
+        DatePickerDialog(
+            onDismissRequest = { showPicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { onStartDateChange(formatStartDate(it)) }
+                    showPicker = false
+                }) {
+                    Text("Confirm", color = AppPrimaryGreen, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPicker = false }) {
+                    Text("Cancel", color = AppTextSecondary)
+                }
+            },
+            colors = pickerColors
+        ) {
+            DatePicker(
+                state = datePickerState,
+                showModeToggle = false,
+                title = {
+                    Text(
+                        "Select start date",
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+                        color = AppTextPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = pickerColors
+            )
+        }
+    }
+}
+
+private fun startOfTodayMillis(): Long {
+    val cal = java.util.Calendar.getInstance()
+    cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+    cal.set(java.util.Calendar.MINUTE, 0)
+    cal.set(java.util.Calendar.SECOND, 0)
+    cal.set(java.util.Calendar.MILLISECOND, 0)
+    return cal.timeInMillis
+}
+
+private fun formatStartDate(millis: Long): String {
+    val formatter = java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.getDefault())
+    return formatter.format(java.util.Date(millis))
 }
 
 @Composable
@@ -409,6 +555,7 @@ private fun ReviewStep(
     messName: String,
     messImageRes: Int,
     plan: PlanChoice,
+    serviceType: String,
     mealTime: String,
     foodType: String,
     startDate: String,
@@ -438,12 +585,13 @@ private fun ReviewStep(
             }
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
             ReviewGrid(
-                items = listOf(
-                    "Plan" to "${plan.title} Subscription",
-                    "Meals" to "${plan.meals} meals",
-                    "Starts" to "$startDate, $timeSlot",
-                    "Address" to address
-                )
+                items = buildList {
+                    add("Plan" to "${plan.title} Subscription")
+                    add("Meals" to "${plan.meals} meals")
+                    add("Service" to serviceType)
+                    add("Starts" to "$startDate, $timeSlot")
+                    if (serviceType == "Delivery") add("Address" to address)
+                }
             )
         }
 
@@ -463,7 +611,7 @@ private fun ReviewStep(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 PaymentChoice("UPI", Icons.Default.Payments, paymentMethod, onPaymentChange)
                 PaymentChoice("Card", Icons.Default.CreditCard, paymentMethod, onPaymentChange)
-                PaymentChoice("Cash on Delivery", Icons.Default.Home, paymentMethod, onPaymentChange)
+                PaymentChoice("Cash", Icons.Default.Money, paymentMethod, onPaymentChange)
             }
         }
     }
