@@ -3,6 +3,10 @@
 package com.example.messapp.ui.subscription
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -59,6 +63,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +72,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -139,6 +146,10 @@ fun SubscriptionFlowScreen(
         SubscriptionSuccessScreen(
             subscriptionId = subscriptionId,
             messName = mess.name,
+            planTitle = plan.title,
+            serviceType = serviceType,
+            startDate = startDate,
+            timeSlot = timeSlot,
             onViewSubscription = {
                 navController.navigate(Routes.SUBSCRIPTION) {
                     popUpTo(Routes.HOME)
@@ -621,9 +632,30 @@ private fun ReviewStep(
 private fun SubscriptionSuccessScreen(
     subscriptionId: String,
     messName: String,
+    planTitle: String,
+    serviceType: String,
+    startDate: String,
+    timeSlot: String,
     onViewSubscription: () -> Unit,
     onDone: () -> Unit
 ) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+
+    val tickScale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "tickScale"
+    )
+    val contentAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 450, delayMillis = 220),
+        label = "contentAlpha"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -635,38 +667,88 @@ private fun SubscriptionSuccessScreen(
         Box(
             modifier = Modifier
                 .size(96.dp)
+                .scale(tickScale)
                 .background(AppSoftGreen, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = AppSuccessGreen, modifier = Modifier.size(64.dp))
+            Icon(
+                Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = AppSuccessGreen,
+                modifier = Modifier
+                    .size(64.dp)
+                    .scale(tickScale)
+            )
         }
+
         Spacer(Modifier.height(24.dp))
-        Text("Subscription Confirmed", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = AppTextPrimary)
-        Spacer(Modifier.height(8.dp))
+
+        Column(
+            modifier = Modifier.alpha(contentAlpha),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "Subscription Confirmed",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = AppTextPrimary
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            CardBlock(background = AppSoftGreen.copy(alpha = 0.5f)) {
+                SuccessInfoRow(Icons.Default.Restaurant, "Mess", messName)
+                Spacer(Modifier.height(12.dp))
+                SuccessInfoRow(Icons.Default.CalendarMonth, "First meal", "$startDate, $timeSlot")
+                Spacer(Modifier.height(12.dp))
+                SuccessInfoRow(Icons.Default.Storefront, "Plan", "$planTitle • $serviceType")
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            Text(
+                "Subscription ID: $subscriptionId",
+                color = AppPrimaryGreen,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = onViewSubscription,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = AppPrimaryGreen)
+            ) {
+                Text("View Subscription")
+            }
+            Spacer(Modifier.height(10.dp))
+            OutlinedButton(
+                onClick = onDone,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text("Back to Home", color = AppTextPrimary)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SuccessInfoRow(icon: ImageVector, label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = AppPrimaryGreen, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(10.dp))
+        Text(label, color = AppTextSecondary, modifier = Modifier.weight(1f))
         Text(
-            "Your $messName meal plan is active. We will remind you before your first delivery.",
-            color = AppTextSecondary,
-            textAlign = TextAlign.Center
+            value,
+            color = AppTextPrimary,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.End
         )
-        Spacer(Modifier.height(16.dp))
-        Text("Subscription ID: $subscriptionId", color = AppPrimaryGreen, fontWeight = FontWeight.SemiBold)
-        Spacer(Modifier.height(28.dp))
-        Button(
-            onClick = onViewSubscription,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AppPrimaryGreen)
-        ) {
-            Text("View Subscription")
-        }
-        Spacer(Modifier.height(10.dp))
-        OutlinedButton(
-            onClick = onDone,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text("Back to Home", color = AppTextPrimary)
-        }
     }
 }
 
